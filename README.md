@@ -1,7 +1,10 @@
 # Bless Life Services LLC — Website
 
+**Live site:** https://jeaneveillard.github.io/bless-life-services/
+**Source:** https://github.com/Jeaneveillard/bless-life-services
+
 Static website. No build step, no dependencies, no server required.
-Open `index.html` in any browser to preview.
+Open `index.html` in any browser to preview locally.
 
 ```
 Andree Lourdes/
@@ -9,20 +12,24 @@ Andree Lourdes/
 ├── styles.css      ← all styling
 ├── script.js       ← menu, scroll reveal, FAQ, contact form
 ├── assets/
-│   └── logo.png    ← PUT YOUR LOGO HERE
+│   └── logo.png    ← brand logo (installed)
 └── README.md
 ```
 
 ---
 
-## 1. Add the logo (do this first)
+## 1. Sending corrections
 
-Save the Bless Life Services logo image into the `assets/` folder with the
-exact filename **`logo.png`**.
+The site is live and public. To request a change, open an issue:
 
-Until you do, the site shows a text-only logo — nothing breaks.
+**https://github.com/Jeaneveillard/bless-life-services/issues/new**
 
-Recommended: a version with a **transparent background**, at least 400 px wide.
+Write what should change and where — for example *"The hours should read
+Monday to Saturday, 8am to 8pm"* or *"Replace the second testimonial."*
+No technical knowledge needed; plain English is fine. Screenshots help.
+
+Every change pushed to the `main` branch republishes the live site
+automatically, usually within a minute.
 
 ---
 
@@ -92,28 +99,26 @@ setup, but the visitor must click "Send" in their own mail app.
 
 ---
 
-## 5. Publishing the site online
+## 5. Hosting
 
-Pick one — all free:
+The site is already published on **GitHub Pages** at
+https://jeaneveillard.github.io/bless-life-services/ — free, HTTPS, no
+maintenance. Pushing to `main` redeploys it.
 
-**Netlify Drop (easiest, 60 seconds)**
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag the entire `Andree Lourdes` folder onto the page
-3. You get a live URL immediately; connect your own domain in Site settings
+**To use a custom domain** (e.g. `blesslifeservices.com`):
 
-**Vercel** — [vercel.com/new](https://vercel.com/new), same drag-and-drop flow.
-
-**GitHub Pages** — push the folder to a repo, then Settings → Pages → deploy
-from the `main` branch root.
-
-**Traditional hosting (GoDaddy, Bluehost, Hostinger…)** — upload the three
-files plus the `assets` folder into `public_html/` via FTP or File Manager.
+1. Buy the domain (Namecheap, Google Domains, GoDaddy…).
+2. At your registrar, add these DNS records:
+   - four `A` records for `@` → `185.199.108.153`, `185.199.109.153`,
+     `185.199.110.153`, `185.199.111.153`
+   - one `CNAME` for `www` → `jeaneveillard.github.io`
+3. In the repo: **Settings → Pages → Custom domain**, enter the domain, save,
+   then tick **Enforce HTTPS** once the certificate is issued.
 
 ---
 
 ## 6. Before going live — checklist
 
-- [ ] Logo saved as `assets/logo.png`
 - [ ] All `[BRACKETED]` placeholders replaced or deleted
 - [ ] All store links tested by clicking them
 - [ ] Testimonials replaced with real ones, or section deleted
