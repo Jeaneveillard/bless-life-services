@@ -181,17 +181,28 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;margin:0;le
   gap:1.5rem;min-height:96px;
 }
 
-/* The logo is a full lockup — hands, quill and wordmark — so it stands alone.
-   No typographic brand name beside it, or the name reads twice. */
-.brand{display:flex;align-items:center;text-decoration:none;flex:none}
+/* The logo carries its own wordmark, but at header scale that text is far too
+   small to read — it works as an emblem only. So the name is set alongside it
+   in type. alt="" on the image keeps screen readers from hearing it twice. */
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;flex:none}
 .brand__logo{
-  height:78px;width:auto;
+  height:66px;width:auto;
   transition:height .4s var(--ease),transform .45s var(--ease);
 }
-.brand:hover .brand__logo{transform:scale(1.04)}
+.brand:hover .brand__logo{transform:scale(1.05)}
+
+.brand__type{display:flex;flex-direction:column;line-height:1}
+.brand__type strong{
+  font-family:var(--display);font-weight:700;
+  font-size:1.34rem;letter-spacing:-.02em;color:var(--blue-800);
+}
+.brand__type em{
+  font-family:var(--display);font-style:italic;font-weight:400;
+  font-size:.84rem;letter-spacing:.09em;color:var(--gold-600);margin-top:.2rem;
+}
 
 .site-header.is-compact .site-header__inner{min-height:74px}
-.site-header.is-compact .brand__logo{height:58px}
+.site-header.is-compact .brand__logo{height:52px}
 
 .nav{display:flex;align-items:center;gap:.35rem}
 .nav a{
@@ -737,7 +748,8 @@ a.contact__v:hover{color:var(--gold-400)}
     border-bottom:0;border-radius:100px;
   }
   body.nav-open{overflow:hidden}
-  /* The open menu sits behind the header, so the burger must invert. */
+  /* The open menu sits behind the header, so the logotype and burger invert. */
+  body.nav-open .brand__type strong{color:#fff}
   body.nav-open .burger{border-color:var(--line-light)}
   body.nav-open .burger span{background:#fff}
 }
@@ -747,8 +759,10 @@ a.contact__v:hover{color:var(--gold-400)}
   .hero__actions .btn{width:100%}
   .card{padding:2rem 1.5rem}
   .card__num{font-size:2.2rem;top:1.2rem;right:1.3rem}
-  .brand__logo{height:60px}
-  .site-header__inner{min-height:78px}
+  .brand__logo{height:50px}
+  .brand__type strong{font-size:1.08rem}
+  .brand__type em{font-size:.72rem}
+  .site-header__inner{min-height:76px}
   .footer__logo{height:84px}
 }
 
