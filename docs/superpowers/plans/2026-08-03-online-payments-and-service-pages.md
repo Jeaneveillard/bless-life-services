@@ -259,8 +259,6 @@ Full file. The header nav uses `index.html#...` because this page is not the hom
 
     <nav class="nav" id="nav" aria-label="Primary">
       <a href="index.html#services">Services</a>
-      <a href="cpr.html">CPR &amp; BLS</a>
-      <a href="notary.html">Notary</a>
       <a href="index.html#store">Store</a>
       <a href="index.html#about">About</a>
       <a href="index.html#faq">FAQ</a>
@@ -318,8 +316,6 @@ Full file. The header nav uses `index.html#...` because this page is not the hom
 
     <nav class="footer__nav" aria-label="Footer">
       <a href="index.html#services">Services</a>
-      <a href="cpr.html">CPR &amp; BLS</a>
-      <a href="notary.html">Notary</a>
       <a href="index.html#store">Store</a>
       <a href="index.html#about">About</a>
       <a href="index.html#contact">Contact</a>
@@ -347,7 +343,7 @@ Full file. The header nav uses `index.html#...` because this page is not the hom
 bash tools/check-site.sh
 ```
 
-Expected: FAIL — `./thank-you.html links to missing file: cpr.html` and `notary.html` (they arrive in Task 5). This failure is expected and is resolved by Task 5; do not create stub files to silence it.
+Expected: every line `ok`, final line `PASS`. `thank-you.html` deliberately ships with the *current* five-entry nav — the CPR and Notary entries are added to every page at once in Task 5, when the pages they point to exist. Never commit a link to a file that is not there yet.
 
 - [ ] **Step 4: Verify the page renders**
 
@@ -440,7 +436,6 @@ The wording must not imply certification is bought online.
           </div>
           <p class="pay__note">
             AHA course completion cards require this hands-on session.
-            <a href="cpr.html">How certification works</a>
           </p>
         </div>
 ```
@@ -451,7 +446,7 @@ The wording must not imply certification is bought online.
 bash tools/check-site.sh
 ```
 
-Expected: `cpr.html` / `notary.html` still reported missing (Task 5). Placeholder total rises by 12. No new failure type.
+Expected: every line `ok`, final line `PASS`. Placeholder total rises by 12.
 
 - [ ] **Step 7: Verify layout on mobile**
 
@@ -639,7 +634,26 @@ Replace lines 66-72:
     </nav>
 ```
 
-- [ ] **Step 3: Point the two service cards at their new pages**
+- [ ] **Step 3: Add the two entries to the `thank-you.html` navs too**
+
+`thank-you.html` shipped in Task 2 with the five-entry nav. Now that the pages exist,
+give it the same seven-entry header nav and six-entry footer nav as `index.html`,
+keeping its `index.html#...` prefixes. All four pages must show an identical menu.
+
+- [ ] **Step 4: Restore the certification link on the CPR card**
+
+In `index.html`, the CPR card's `pay__note` currently reads
+`AHA course completion cards require this hands-on session.` Now that `cpr.html`
+exists, append the link:
+
+```html
+          <p class="pay__note">
+            AHA course completion cards require this hands-on session.
+            <a href="cpr.html">How certification works</a>
+          </p>
+```
+
+- [ ] **Step 5: Point the two service cards at their new pages**
 
 In `index.html`, in the Notary card replace `<a href="#contact" class="card__link">Book a notary` with `<a href="notary.html" class="card__link">Notary services in detail`.
 
@@ -647,7 +661,7 @@ In the CPR card replace `<a href="#contact" class="card__link">` with `<a href="
 
 Leave the Officiant, Decoration and Candles cards pointing at `#contact`.
 
-- [ ] **Step 4: Create `cpr.html`**
+- [ ] **Step 6: Create `cpr.html`**
 
 `thank-you.html` (created in Task 2) already carries the exact header, nav, footer and
 `<noscript>` these pages need, with `index.html#...` links that are correct for a
@@ -717,7 +731,7 @@ Then in `cpr.html` make exactly four changes:
 </section>
 ```
 
-- [ ] **Step 5: Create `notary.html`**
+- [ ] **Step 7: Create `notary.html`**
 
 `notary.html` was copied from `thank-you.html` in Step 4. Make the same four changes:
 `<title>` becomes `Notary Public — Bless Life Services LLC`; description becomes
@@ -776,7 +790,7 @@ delete the `noindex` meta; and replace the `<main id="main">` contents with:
 </section>
 ```
 
-- [ ] **Step 6: Copy the service-specific FAQ entries onto each page**
+- [ ] **Step 8: Copy the service-specific FAQ entries onto each page**
 
 The spec calls for service-specific FAQ on the new pages. Open the FAQ section of
 `index.html` (lines 388-475) and read the existing questions. Copy — do not move —
@@ -801,7 +815,7 @@ Check the FAQ markup first so the paste matches:
 sed -n '388,475p' index.html
 ```
 
-- [ ] **Step 7: Run the check — this is the one that must go fully green**
+- [ ] **Step 9: Run the check — this is the one that must go fully green**
 
 ```bash
 bash tools/check-site.sh
@@ -809,11 +823,11 @@ bash tools/check-site.sh
 
 Expected: every line `ok`, including `link resolves` for `cpr.html` and `notary.html` from all four pages. Final line `PASS — N placeholder(s) remaining`.
 
-- [ ] **Step 8: Click every nav link in a browser**
+- [ ] **Step 10: Click every nav link in a browser**
 
 Open `index.html`. Click CPR & BLS, Notary, then the logo, then the footer links on each page. Expected: no 404, header identical on all four pages, mobile burger menu opens on the new pages.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 11: Commit**
 
 ```bash
 git add index.html cpr.html notary.html
