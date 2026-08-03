@@ -49,10 +49,7 @@ Full list:
 | `[ETSY SHOP LINK]` | Full URL of your Etsy shop | Store section |
 | `[TIKTOK SHOP LINK]` | Full URL of your TikTok Shop | Store section |
 | `[SHOPIFY STORE LINK]` | Full URL of your Shopify store | Store section |
-| `[FACEBOOK LINK]` | Your Facebook page URL | Contact section |
-| `[INSTAGRAM LINK]` | Your Instagram profile URL | Contact section |
-| `[TIKTOK LINK]` | Your TikTok profile URL | Contact section |
-| `[YOUTUBE LINK]` | Your YouTube channel URL | Contact section |
+| `[YOUTUBE LINK]` | Your YouTube channel URL, or delete the whole `<a>` | Contact section |
 | `[YOUR HOURS — …]` | e.g. `Mon–Sat 8:00 AM – 8:00 PM` | Contact section |
 | `[ADD YOUR PRICING HERE]` | Your rates, or delete the whole FAQ item | FAQ section |
 | `[CLIENT NAME]` ×3 | Real client names (with their permission) | Testimonials |
@@ -67,6 +64,21 @@ quotation marks around it in the HTML:
 
 > If a marketplace isn't live yet, delete that entire `<a class="shop">…</a>`
 > block rather than leaving a dead link.
+
+### Social accounts already wired up
+
+The Contact section links to these three. Shortened share links (`fb.me`,
+`vm.tiktok.com`, `?igsh=…`) were resolved to their permanent addresses so the
+links don't expire and don't carry tracking parameters.
+
+| Network | Link in the site |
+|---|---|
+| Facebook | `https://www.facebook.com/people/Bless-Life-Services-LLC/100091315776379/` |
+| Instagram | `https://www.instagram.com/blesslifeservices/` |
+| TikTok | `https://www.tiktok.com/@blesslifeservicesbackup` |
+
+> The TikTok handle ends in **`backup`**. If there is a main TikTok account,
+> point line 509 of `index.html` at that one instead.
 
 ---
 
