@@ -1,0 +1,12 @@
+# Shell scripts must keep LF endings — bash will not run a script with CRLF.
+# This repo is developed on Windows with core.autocrlf=true, which would
+# otherwise convert tools/check-site.sh on checkout and break the site check.
+*.sh text eol=lf
+
+# Web sources are edited on Windows but served as-is; normalise them too.
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.md   text eol=lf
+
+*.png binary
