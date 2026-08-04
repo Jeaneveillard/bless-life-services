@@ -8,11 +8,16 @@ Open `index.html` in any browser to preview locally.
 
 ```
 Andree Lourdes/
-├── index.html      ← all content
-├── styles.css      ← all styling
-├── script.js       ← menu, scroll reveal, FAQ, contact form
+├── index.html          ← homepage — all main content, candles, services
+├── cpr.html            ← CPR/BLS training detail page + payment
+├── notary.html         ← notary service detail page + payment
+├── thank-you.html      ← page shown after a successful payment
+├── styles.css          ← all styling
+├── script.js           ← menu, scroll reveal, FAQ, contact form
 ├── assets/
-│   └── logo.png    ← brand logo (installed)
+│   └── logo.png        ← brand logo (installed)
+├── tools/
+│   └── check-site.sh   ← automated check — see "Before going live"
 └── README.md
 ```
 
@@ -44,11 +49,6 @@ Full list:
 | Placeholder in the file | Replace with | Where |
 |---|---|---|
 | `[EXPIRATION DATE]` | Your MA notary commission expiration date | Credentials section |
-| `[AMAZON STORE LINK]` | Full URL of your Amazon storefront | Store section |
-| `[WALMART STORE LINK]` | Full URL of your Walmart seller page | Store section |
-| `[ETSY SHOP LINK]` | Full URL of your Etsy shop | Store section |
-| `[TIKTOK SHOP LINK]` | Full URL of your TikTok Shop | Store section |
-| `[SHOPIFY STORE LINK]` | Full URL of your Shopify store | Store section |
 | `[YOUTUBE LINK]` | Your YouTube channel URL, or delete the whole `<a>` | Contact section |
 | `[YOUR HOURS — …]` | e.g. `Mon–Sat 8:00 AM – 8:00 PM` | Contact section |
 | `[ADD YOUR PRICING HERE]` | Your rates, or delete the whole FAQ item | FAQ section |
@@ -59,18 +59,50 @@ Full list:
 | `[OFFICIANT DEPOSIT]` / `[DECOR DEPOSIT]` | Deposit amount, e.g. `$150` | Services cards |
 | `[STRIPE — …]` ×7 names, 9 spots | Stripe Payment Link URL | Services, candles, cpr.html, notary.html |
 | `[PAYPAL — …]` ×7 names, 9 spots | PayPal button link URL | Services, candles, cpr.html, notary.html |
-| `[CANDLE n NAME/DESCRIPTION/PRICE/SIZE/IMAGE]` | One set per candle model | Store section |
+| `[CANDLE n NAME/DESCRIPTION/PRICE/SIZE]` | One set per candle model (×3) | Store section |
+| `[CANDLE n IMAGE]` | Path to a real photo file — see "Candle photos" below | Store section |
 | `[CANDLE LEAD TIME]` | e.g. `5–7 days` | Store section |
 
-**A link must look like** `https://www.etsy.com/shop/YourShopName` — keep the
-quotation marks around it in the HTML:
+**A pasted link must look like** a full web address inside the quotation marks
+that are already there — don't remove the quotes, don't leave a space. A
+payment button looks like this before and after:
 
 ```html
-<a href="https://www.etsy.com/shop/YourShopName" class="shop" ...>
+<a class="btn btn--navy pay__btn" href="[STRIPE — CANDLE 1]">Pay by card</a>
 ```
 
-> If a marketplace isn't live yet, delete that entire `<a class="shop">…</a>`
-> block rather than leaving a dead link.
+```html
+<a class="btn btn--navy pay__btn" href="https://buy.stripe.com/abc123xyz">Pay by card</a>
+```
+
+Only the text inside `href="..."` changes. Leave everything else — the class
+names, the button label — exactly as it is.
+
+> If you decide not to sell one of the three candles at all, delete its whole
+> `<article class="candle">…</article>` block from `index.html` (there are
+> three, one per candle, in the store section) instead of leaving unfilled
+> placeholders live on the page.
+
+### Candle photos
+
+`[CANDLE n IMAGE]` is different from the other placeholders — it isn't text
+you type over, it's a **file**. It sits inside `src="[CANDLE 1 IMAGE]"` on the
+candle's `<img>` tag, and the browser needs a real picture at that path to
+show anything.
+
+1. Take or choose a photo of the candle. The tiles are roughly **4:3** shaped
+   (wider than tall), so a photo close to that shape will fill the frame
+   without odd cropping.
+2. Save it into the `assets/` folder, e.g. `assets/candle-vanilla.jpg`.
+3. Replace the placeholder with that path:
+   ```html
+   <img class="candle__img" src="assets/candle-vanilla.jpg" alt="Vanilla candle" width="600" height="450" loading="lazy">
+   ```
+4. The `alt="[CANDLE 1 NAME] candle"` text right next to the image already
+   updates itself once you replace `[CANDLE 1 NAME]` per the table above —
+   just check it still reads like a sensible description (e.g. `"Vanilla
+   candle"`), since that's what a screen reader speaks aloud for anyone who
+   can't see the photo.
 
 ### Social accounts already wired up
 
@@ -85,7 +117,9 @@ links don't expire and don't carry tracking parameters.
 | TikTok | `https://www.tiktok.com/@blesslifeservicesbackup` |
 
 > The TikTok handle ends in **`backup`**. If there is a main TikTok account,
-> point line 509 of `index.html` at that one instead.
+> use Find and Replace (Ctrl+H) in `index.html` to search for
+> `https://www.tiktok.com/@blesslifeservicesbackup` and replace it with the
+> main account's URL instead.
 
 ---
 
@@ -134,9 +168,13 @@ item in their dashboard, they hand you a URL, you paste it into `index.html`.
 
 1. Dashboard → **Payment links** → **New**.
 2. Name the item exactly as it appears on the site, set the price, create.
-3. Under **After payment**, choose *Redirect to a page* and enter
+3. For the three candle links only, turn on **Shipping address collection**
+   and add a shipping rate — candles are physically mailed, so Stripe needs
+   an address and a delivery charge. Leave shipping **off** for the notary,
+   CPR, and deposit links — nothing is shipped for those.
+4. Under **After payment**, choose *Redirect to a page* and enter
    `https://jeaneveillard.github.io/bless-life-services/thank-you.html`
-4. Copy the link. Paste it over the matching `[STRIPE — …]` in `index.html`.
+5. Copy the link. Paste it over the matching `[STRIPE — …]` in `index.html`.
 
 **PayPal — one button per item**
 
