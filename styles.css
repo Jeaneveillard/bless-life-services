@@ -155,7 +155,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;margin:0;le
   letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-top:.3rem;
 }
 .pay__row{display:flex;flex-wrap:wrap;gap:.7rem}
-/* margin-top:0 overrides .btn--navy's 1.75rem, which is meant for a standalone
+/* flex-basis 160px is load-bearing: with the .7rem gap the buttons sit side by
+   side above ~331px of available width and stack below it. That threshold has to
+   clear the narrowest container they live in — a .card at the 300px grid minimum
+   leaves ~236px inside its padding. Changing the basis, the gap, the padding or
+   the button copy moves the threshold; re-check it against .cards and .candles.
+   margin-top:0 overrides .btn--navy's 1.75rem, which is meant for a standalone
    CTA and would push the card button below the PayPal one in this row. */
 .pay__btn{padding:.9rem 1rem;font-size:.8rem;letter-spacing:.05em;flex:1 1 160px;white-space:nowrap;margin-top:0}
 .pay__note{font-size:.85rem;color:var(--slate);margin:.9rem 0 0;line-height:1.5}
