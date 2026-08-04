@@ -1,0 +1,41 @@
+{
+  "notary": { "price": "[NOTARY PRICE]", "stripe": "", "paypal": "" },
+  "cpr": { "price": "[CPR PRICE]", "stripe": "", "paypal": "" },
+  "officiant": { "deposit": "[OFFICIANT DEPOSIT]", "stripe": "", "paypal": "" },
+  "decoration": { "deposit": "[DECOR DEPOSIT]", "stripe": "", "paypal": "" },
+  "candleLeadTime": "[CANDLE LEAD TIME]",
+  "candles": [
+    {
+      "name": "[CANDLE 1 NAME]",
+      "description": "[CANDLE 1 DESCRIPTION]",
+      "price": "[CANDLE 1 PRICE]",
+      "size": "[CANDLE 1 SIZE]",
+      "image": "",
+      "stripe": "",
+      "paypal": ""
+    },
+    {
+      "name": "[CANDLE 2 NAME]",
+      "description": "[CANDLE 2 DESCRIPTION]",
+      "price": "[CANDLE 2 PRICE]",
+      "size": "[CANDLE 2 SIZE]",
+      "image": "",
+      "stripe": "",
+      "paypal": ""
+    },
+    {
+      "name": "[CANDLE 3 NAME]",
+      "description": "[CANDLE 3 DESCRIPTION]",
+      "price": "[CANDLE 3 PRICE]",
+      "size": "[CANDLE 3 SIZE]",
+      "image": "",
+      "stripe": "",
+      "paypal": ""
+    }
+  ],
+  "misc": {
+    "notaryExpiration": "[EXPIRATION DATE]",
+    "hours": "[YOUR HOURS — e.g. Mon–Sat 8am–8pm]",
+    "youtube": ""
+  }
+}
