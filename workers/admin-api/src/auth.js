@@ -2,11 +2,29 @@ const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 
 function base64urlEncode(input) {
   const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input;
-  return Buffer.from(bytes).toString('base64url');
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function base64urlDecode(str) {
-  return Buffer.from(str, 'base64url').toString('utf8');
+  return new TextDecoder().decode(base64urlDecodeToBytes(str));
+}
+
+function base64urlDecodeToBytes(str) {
+  let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = base64.length % 4;
+  if (pad) {
+    base64 += '='.repeat(4 - pad);
+  }
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
 }
 
 async function importHmacKey(secret) {
@@ -20,12 +38,28 @@ async function importHmacKey(secret) {
 }
 
 export function resolveRole(password, env) {
-  if (password === env.OWNER_PASSWORD) {
+  if (typeof password !== 'string' || password.length === 0) {
+    return null;
+  }
+
+  const ownerPassword = env.OWNER_PASSWORD;
+  if (
+    typeof ownerPassword === 'string'
+    && ownerPassword.length > 0
+    && password === ownerPassword
+  ) {
     return 'owner';
   }
-  if (password === env.DEV_PASSWORD) {
+
+  const devPassword = env.DEV_PASSWORD;
+  if (
+    typeof devPassword === 'string'
+    && devPassword.length > 0
+    && password === devPassword
+  ) {
     return 'dev';
   }
+
   return null;
 }
 
@@ -81,7 +115,7 @@ export async function verifySession(token, env) {
 
   let sigBytes;
   try {
-    sigBytes = Buffer.from(sigB64, 'base64url');
+    sigBytes = base64urlDecodeToBytes(sigB64);
   } catch {
     return null;
   }

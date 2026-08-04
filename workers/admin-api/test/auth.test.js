@@ -14,6 +14,28 @@ test('resolveRole owner and dev', () => {
   assert.equal(resolveRole('nope', env), null);
 });
 
+test('resolveRole rejects empty or missing password', () => {
+  assert.equal(resolveRole('', env), null);
+  assert.equal(resolveRole(undefined, env), null);
+});
+
+test('resolveRole rejects empty env passwords', () => {
+  const emptyOwnerEnv = {
+    OWNER_PASSWORD: '',
+    DEV_PASSWORD: 'dev-secret',
+    SESSION_SECRET: env.SESSION_SECRET,
+  };
+  assert.equal(resolveRole('', emptyOwnerEnv), null);
+  assert.equal(resolveRole('dev-secret', emptyOwnerEnv), 'dev');
+
+  const missingOwnerEnv = {
+    DEV_PASSWORD: 'dev-secret',
+    SESSION_SECRET: env.SESSION_SECRET,
+  };
+  assert.equal(resolveRole('', missingOwnerEnv), null);
+  assert.equal(resolveRole(undefined, missingOwnerEnv), null);
+});
+
 test('sign and verify session', async () => {
   const t = await signSession('dev', env);
   const v = await verifySession(t, env);
