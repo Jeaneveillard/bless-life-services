@@ -193,12 +193,39 @@ material and practice quizzes, and the payment buttons sell **the in-person
 skills session**, which only an AHA instructor can deliver. The site feeds her
 real product instead of competing with it.
 
-Notary training carries no equivalent restriction.
-
 **Paid, gated content cannot run on GitHub Pages.** Andrée's courses are to be
 restricted to paying clients, which requires user accounts and a server. A
 static site cannot withhold a page, hide an answer key from "View Source",
 record who passed, or issue a verifiable certificate.
+
+### Accounts required — gathered 2026-08-04
+
+Three roles, not two:
+
+| Role | Purpose | Status |
+|---|---|---|
+| Andrée — admin | Publishes courses, sees enrolments, marks exams | Clear |
+| CPR — student | Course material and exams, paid and gated | Clear |
+| Notary — ? | A separate login with a different role | **Undefined** |
+
+**Andrée teaches CPR only. She does not train notaries.** That single fact
+decides the architecture: a course platform answers the CPR half completely and
+does not answer the notary half at all, because the notary space is not training.
+Whatever it turns out to be — case tracking, document exchange, appointment
+history — it is a different kind of product and needs its own answer.
+
+Open question to put to Andrée: **what does a client actually do in the notary
+space?** Until that is answered, the notary login cannot be specified, and
+choosing a platform for CPR alone risks buying a tool that solves half a problem.
+
+Note on structure: two entirely separate login systems were requested. One
+account with two entitlements is normally better — a person enrolled in both
+keeps one password, and Andrée keeps one roster. Separate systems are justified
+only if the two audiences must never overlap. Not yet decided.
+
+On the admin login specifically: on a hosted platform it costs nothing — the
+owner account *is* the admin. On an own backend every role has to be built and
+secured. This requirement argues for the platform option.
 
 Options priced 2026-08-03, decision postponed:
 
