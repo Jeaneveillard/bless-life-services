@@ -31,6 +31,10 @@
         el.setAttribute('alt', v + ' candle');
       }
     });
+    document.querySelectorAll('[data-href]').forEach(function (el) {
+      var v = get(data, el.getAttribute('data-href'));
+      if (typeof v === 'string' && v.indexOf('https://') === 0) el.setAttribute('href', v);
+    });
   }
   fetch('content/site.json', { cache: 'no-store' })
     .then(function (r) { if (!r.ok) throw new Error('content'); return r.json(); })
