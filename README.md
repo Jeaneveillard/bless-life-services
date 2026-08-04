@@ -40,9 +40,16 @@ automatically, usually within a minute.
 
 ## 2. Replace the placeholders
 
-Every item still needing your input is marked in the page with a
-**gold highlighted box** like `[YOUR HOURS]`. Open `index.html` in
-Notepad or VS Code, use **Ctrl+H** (Find and Replace), and swap each one.
+Placeholders live in **three files**: `index.html`, `cpr.html` and
+`notary.html`. Every placeholder that appears as **visible text** on the
+page — prices, candle descriptions, and so on — is marked with a
+**gold highlighted box** like `[YOUR HOURS]`, so you can spot those just by
+looking at the page. Placeholders that live inside a link or an image
+(`href="…"`, `src="…"` — the Stripe/PayPal links and the candle photos)
+don't show on the page at all and can't be boxed, so you'll only find those
+by opening the file itself and searching for the brackets, or by working
+through the table below. Open each file in Notepad or VS Code, use
+**Ctrl+H** (Find and Replace), and swap each one.
 
 Full list:
 
@@ -156,7 +163,9 @@ setup, but the visitor must click "Send" in their own mail app.
 
 Nothing charges money until each `[STRIPE — …]` and `[PAYPAL — …]` placeholder is
 replaced with a real link. Both providers are set up the same way: you create the
-item in their dashboard, they hand you a URL, you paste it into `index.html`.
+item in their dashboard, they hand you a URL, you paste it into `index.html`,
+and — for the notary and CPR links, which also appear on their own detail
+pages — into `cpr.html` or `notary.html` too.
 
 **Before you start, you need:**
 
@@ -172,16 +181,29 @@ item in their dashboard, they hand you a URL, you paste it into `index.html`.
    and add a shipping rate — candles are physically mailed, so Stripe needs
    an address and a delivery charge. Leave shipping **off** for the notary,
    CPR, and deposit links — nothing is shipped for those.
-4. Under **After payment**, choose *Redirect to a page* and enter
+4. For the two deposit links only (`[STRIPE — OFFICIANT DEPOSIT]` and
+   `[STRIPE — DECOR DEPOSIT]`), add a **required custom field** asking for
+   the event date. Nothing in checkout otherwise asks which date is being
+   held — without this field you receive a deposit for a date you were
+   never told.
+5. Under **After payment**, choose *Redirect to a page* and enter
    `https://jeaneveillard.github.io/bless-life-services/thank-you.html`
-5. Copy the link. Paste it over the matching `[STRIPE — …]` in `index.html`.
+6. Copy the link. Paste it over the matching `[STRIPE — …]` in `index.html`,
+   and in `cpr.html` or `notary.html` too for the two that appear twice
+   (see below).
 
 **PayPal — one button per item**
 
 1. Log in → **Pay & Get Paid** → **PayPal buttons** → **Buy Now**.
 2. Set the item name and price. For candles, add shipping under checkout settings.
-3. Set **Auto return** to the same `thank-you.html` address as above.
-4. Copy the button link and paste it over the matching `[PAYPAL — …]`.
+3. For the two deposit buttons only (officiant deposit and decor deposit),
+   add a **required custom field** asking for the event date. Nothing in
+   checkout otherwise asks which date is being held — without this field
+   you receive a deposit for a date you were never told.
+4. Set **Auto return** to the same `thank-you.html` address as above.
+5. Copy the button link and paste it over the matching `[PAYPAL — …]` in
+   `index.html`, and in `cpr.html` or `notary.html` too for the two that
+   appear twice (see below).
 
 **Two of them appear twice.** `[STRIPE — NOTARY]` sits on the service card *and* on
 `notary.html`; `[STRIPE — CPR SESSION]` sits on the card *and* on `cpr.html`. Same for
@@ -198,6 +220,21 @@ candle twice. The lead time on the page is what protects you instead.
 
 **Never label anything "BLS certification".** What you sell online is the in-person
 skills session. The AHA card is issued after it, by the AHA.
+
+**Refunds and cancellations.** Both Stripe and PayPal look at your published
+refund policy when they decide a dispute or a chargeback — if you haven't
+stated one, the platform decides for you, and that usually favors the buyer.
+Decide your own terms and publish them on the site before you go live,
+especially for the made-to-order candles (which can't be "returned" once
+poured) and the non-refundable booking deposits. This is a business decision
+only you can make — write it in your own words.
+
+**Sales tax on the candles.** Massachusetts taxes tangible personal property
+at 6.25%. Candles are goods, so they are very likely taxable; notary,
+officiant, decoration and CPR services are not goods and are treated
+differently. Turn on tax collection for the three candle links only, and
+confirm the correct treatment for every item with your accountant before
+you rely on this — this is guidance, not tax advice.
 
 **Before going live, run:**
 
@@ -230,10 +267,13 @@ maintenance. Pushing to `main` redeploys it.
 ## 7. Before going live — checklist
 
 - [ ] All `[BRACKETED]` placeholders replaced or deleted
-- [ ] All store links tested by clicking them
+- [ ] All payment links tested by clicking them
 - [ ] Testimonials replaced with real ones, or section deleted
 - [ ] Phone and email verified: **857-373-9518** / **etienneandree@yahoo.com**
 - [ ] Notary commission expiration date is current
+- [ ] AHA instructor certification "Valid through" date (`index.html`,
+      Credentials section) is still current — this is hard-coded and will
+      go stale silently if not checked
 - [ ] Checked on a phone as well as a computer
 - [ ] `bash tools/check-site.sh --production` passes
 - [ ] One real payment made through Stripe and refunded
