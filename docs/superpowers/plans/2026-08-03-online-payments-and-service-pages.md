@@ -220,11 +220,13 @@ Append to `styles.css` after `.btn--full`:
   letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-top:.3rem;
 }
 .pay__row{display:flex;flex-wrap:wrap;gap:.7rem}
-/* flex-basis 160px is load-bearing: with the .7rem gap the buttons sit side by
-   side above ~331px of available width and stack below it. That threshold has to
-   clear the narrowest container they live in — a .card at the 300px grid minimum
-   leaves ~236px inside its padding. Changing the basis, the gap, the padding or
-   the button copy moves the threshold; re-check it against .cards and .candles.
+/* The wrap threshold is load-bearing. white-space:nowrap makes each button's
+   automatic minimum size its max-content width (~156px for "Pay with PayPal"),
+   and that minimum — not the 160px basis — is what actually governs: the buttons
+   sit side by side above ~323px of available width and stack below it. Changing
+   the basis, the gap, the padding or the button copy moves the threshold, so
+   re-check it against .cards and .candles. Both are narrower than 323px, which is
+   why .candle stacks them deliberately further down rather than by accident.
    margin-top:0 overrides .btn--navy's 1.75rem, which is meant for a standalone
    CTA and would push the card button below the PayPal one in this row. */
 .pay__btn{padding:.9rem 1rem;font-size:.8rem;letter-spacing:.05em;flex:1 1 160px;white-space:nowrap;margin-top:0}
@@ -509,6 +511,14 @@ The five marketplace links are unreplaced placeholders pointing nowhere. Replace
   color:var(--gold-600);margin:0;
 }
 .candle .pay{margin-top:1.1rem}
+/* A candle tile's inner width never reliably clears the ~323px side-by-side
+   threshold noted above: it tops out around 301px in the 3-column grid, and
+   in the 2-column band it only crosses the threshold in a narrow slice near
+   857-900px. Left to the shared rule, the two buttons would stack almost
+   everywhere but flip to side-by-side in that sliver — an accident of width,
+   not a real design choice. Stack them on purpose at every width instead. */
+.candle .pay__row{flex-direction:column}
+.candle .pay__btn{flex:1 1 auto;width:100%}
 
 @media (max-width:900px){ .candles{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:600px){ .candles{grid-template-columns:1fr} }
