@@ -1,34 +1,17 @@
 import { resolveRole, signSession, verifySession } from './auth.js';
+import { corsHeadersForOrigin } from './cors.js';
 import { getFile, putBinary, putFile } from './github.js';
 import { validateSiteContent } from './schema.js';
-
-const ALLOWED = new Set([
-  'https://jeaneveillard.github.io',
-  'http://localhost:5500',
-  'http://127.0.0.1:5500',
-]);
+import { validateUpload } from './upload.js';
 
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_MAX_ATTEMPTS = 20;
-const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const SAFE_NAME_PATTERN = /^[A-Za-z0-9._-]+$/;
 
 /** @type {Map<string, { count: number, reset: number }>} */
 const loginAttempts = new Map();
 
 function corsHeaders(request) {
-  const origin = request.headers.get('Origin');
-  const headers = {
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400',
-  };
-  if (origin && ALLOWED.has(origin)) {
-    headers['Access-Control-Allow-Origin'] = origin;
-    headers.Vary = 'Origin';
-  }
-  return headers;
+  return corsHeadersForOrigin(request.headers.get('Origin'));
 }
 
 function json(request, status, body) {
@@ -77,30 +60,6 @@ async function requireAuth(request, env) {
     return null;
   }
   return verifySession(match[1].trim(), env);
-}
-
-function safeAssetName(name) {
-  if (typeof name !== 'string') {
-    return null;
-  }
-  const base = name.split(/[/\\]/).pop();
-  if (!base || !SAFE_NAME_PATTERN.test(base)) {
-    return null;
-  }
-  return base;
-}
-
-function decodeBase64Bytes(b64) {
-  try {
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes;
-  } catch {
-    return null;
-  }
 }
 
 async function handleLogin(request, env) {
@@ -183,28 +142,12 @@ async function handleUpload(request, env) {
     return json(request, 400, { error: 'Invalid JSON body' });
   }
 
-  const safeName = safeAssetName(body?.name);
-  if (!safeName) {
-    return json(request, 400, { error: 'Invalid file name' });
+  const validated = validateUpload(body);
+  if (!validated.ok) {
+    return json(request, 400, { error: validated.error });
   }
 
-  const contentType = body?.contentType;
-  if (!ALLOWED_IMAGE_TYPES.has(contentType)) {
-    return json(request, 400, { error: 'contentType must be image/jpeg, image/png, or image/webp' });
-  }
-
-  if (typeof body?.contentBase64 !== 'string' || body.contentBase64.length === 0) {
-    return json(request, 400, { error: 'contentBase64 is required' });
-  }
-
-  const bytes = decodeBase64Bytes(body.contentBase64);
-  if (!bytes) {
-    return json(request, 400, { error: 'contentBase64 is invalid' });
-  }
-  if (bytes.byteLength > MAX_UPLOAD_BYTES) {
-    return json(request, 400, { error: 'Image must be 2 MB or smaller' });
-  }
-
+  const { safeName, contentType, bytes } = validated;
   const path = `assets/${safeName}`;
   const message = `Upload ${path} (admin:${session.role})`;
 
