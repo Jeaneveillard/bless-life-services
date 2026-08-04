@@ -61,11 +61,11 @@ Full list:
 | `[ADD YOUR PRICING HERE]` | Your rates, or delete the whole FAQ item | FAQ section |
 | `[CLIENT NAME]` ×3 | Real client names (with their permission) | Testimonials |
 | `[CITY]` ×2 / `[ORGANIZATION]` | Their town, or the company you trained | Testimonials |
-| `[NOTARY PRICE]` | e.g. `$25` | Notary card + notary.html |
-| `[CPR PRICE]` | e.g. `$85` | CPR card + cpr.html |
+| `[NOTARY PRICE]` | e.g. `$25` | `notary.html` |
+| `[CPR PRICE]` | e.g. `$85` | `cpr.html` |
 | `[OFFICIANT DEPOSIT]` / `[DECOR DEPOSIT]` | Deposit amount, e.g. `$150` | Services cards |
-| `[STRIPE — …]` | Stripe Payment Link URL. 7 different ones; two of them appear on two pages each, so you paste 9 times | Services, candles, cpr.html, notary.html |
-| `[PAYPAL — …]` | PayPal button link URL. Same 7, same 9 places | Services, candles, cpr.html, notary.html |
+| `[STRIPE — …]` | Stripe Payment Link URL. 7 of them, one paste each — see section 5 for which file | Officiant, decor, candles, cpr.html, notary.html |
+| `[PAYPAL — …]` | PayPal button link URL. Same 7, same places | Officiant, decor, candles, cpr.html, notary.html |
 | `[CANDLE n NAME/DESCRIPTION/PRICE/SIZE]` | One set per candle model (×3) | Store section |
 | `[CANDLE n IMAGE]` | Path to a real photo file — see "Candle photos" below | Store section |
 | `[CANDLE LEAD TIME]` | e.g. `5–7 days` | Store section |
@@ -188,9 +188,8 @@ pages — into `cpr.html` or `notary.html` too.
    never told.
 5. Under **After payment**, choose *Redirect to a page* and enter
    `https://jeaneveillard.github.io/bless-life-services/thank-you.html`
-6. Copy the link. Paste it over the matching `[STRIPE — …]` in `index.html`,
-   and in `cpr.html` or `notary.html` too for the two that appear twice
-   (see below).
+6. Copy the link. Paste it over the matching `[STRIPE — …]`. Each one appears
+   in exactly one place — see the table in section 2 for which file.
 
 **PayPal — one button per item**
 
@@ -201,14 +200,19 @@ pages — into `cpr.html` or `notary.html` too.
    checkout otherwise asks which date is being held — without this field
    you receive a deposit for a date you were never told.
 4. Set **Auto return** to the same `thank-you.html` address as above.
-5. Copy the button link and paste it over the matching `[PAYPAL — …]` in
-   `index.html`, and in `cpr.html` or `notary.html` too for the two that
-   appear twice (see below).
+5. Copy the button link and paste it over the matching `[PAYPAL — …]`. Each one
+   appears in exactly one place — see the table in section 2 for which file.
 
-**Two of them appear twice.** `[STRIPE — NOTARY]` sits on the service card *and* on
-`notary.html`; `[STRIPE — CPR SESSION]` sits on the card *and* on `cpr.html`. Same for
-the PayPal pair. Create **one** link each and paste the same URL in both places — do
-not make a second link, or your dashboard will show two products that are really one.
+**Where each link goes.** Seven Stripe links and seven PayPal links, fourteen
+places in total, one paste each:
+
+| Link | File |
+|---|---|
+| `[… — NOTARY]` | `notary.html` |
+| `[… — CPR SESSION]` | `cpr.html` |
+| `[… — OFFICIANT DEPOSIT]` | `index.html` |
+| `[… — DECOR DEPOSIT]` | `index.html` |
+| `[… — CANDLE 1]` / `[… — CANDLE 2]` / `[… — CANDLE 3]` | `index.html` |
 
 **Deposits.** For the officiant and decoration deposits, name the item so the client
 cannot misread it — for example *"Wedding officiant — deposit to reserve your date"*.
