@@ -38,7 +38,7 @@ in each provider’s dashboard (already documented in `README.md`).
 | Where does editable content live? | `content/site.json` | One file, easy to validate and commit |
 | How do public pages use it? | Fetch JSON and fill marked DOM nodes | Keeps HTML structure; no rebuild |
 | How does Andrée save? | `admin/` form → Cloudflare Worker → GitHub Contents API commit | Token never reaches the browser |
-| Auth for v1 | Single shared password, checked only on the Worker | Simple enough for one owner; upgradeable later |
+| Auth for v1 | Two passwords on the Worker: **owner** (Andrée) and **dev** (Jean) | Same edit rights; separate credentials so Jean can fix/update without sharing Andrée’s password |
 | Candle photos | Upload through admin → written under `assets/` + path in JSON | Matches current asset layout |
 | Scope vs CPR courses | Content admin only; courses deferred | User chose B before C |
 
@@ -117,13 +117,15 @@ Andrée. Obscurity is not security; the Worker password is.
 ### 5.3 Cloudflare Worker
 
 - Routes e.g. `https://<worker>.workers.dev/api/*` or a custom route later.
-- Secrets: `ADMIN_PASSWORD`, `GITHUB_TOKEN`, `GITHUB_REPO`
-  (`owner/bless-life-services`), optional `GITHUB_BRANCH` (`main`).
+- Secrets: `OWNER_PASSWORD`, `DEV_PASSWORD`, `SESSION_SECRET`,
+  `GITHUB_TOKEN`, `GITHUB_REPO` (`Jeaneveillard/bless-life-services`),
+  optional `GITHUB_BRANCH` (`main`).
 - Endpoints:
-  - `POST /api/login` — password → session token (HMAC or random id stored
-    in Worker KV / signed cookie alternative: signed JWT with short TTL
-    using another secret `SESSION_SECRET`).
+  - `POST /api/login` — password → if it matches owner or dev, return a
+    short-lived signed Bearer session that includes the role
+    (`owner` | `dev`). Same permissions for both roles in v1.
   - `POST /api/save` — auth + JSON body → validate → commit `content/site.json`.
+    Commit message includes the role, e.g. `Update site content (admin:dev)`.
   - `POST /api/upload` — auth + multipart/base64 image → commit under
     `assets/candle-N.ext` → return path for the form to put in JSON before
     or as part of save.
@@ -161,8 +163,9 @@ reused carefully; prefer a small `admin/admin.css` so public CSS stays clean.
 
 ## 7. Security
 
-- Password and GitHub token **only** in Cloudflare secrets.
-- No admin password hash committed to the repo.
+- Owner password, dev password, session secret, and GitHub token **only**
+  in Cloudflare secrets.
+- No passwords committed to the repo.
 - Session: signed Bearer token (e.g. 8-hour TTL) in `sessionStorage`, sent
   only over HTTPS. Chosen because admin lives on GitHub Pages and the API on
   `*.workers.dev` (cross-origin; HttpOnly cookies are awkward without a
@@ -185,11 +188,13 @@ published anyway). Not sufficient for storing card data (we never do).
 2. Create a GitHub fine-grained PAT with Contents read/write on this repo only.
 3. Deploy Worker; put public API base URL into `admin/admin.js` config
    (public base URL is fine; it is not a secret).
-4. Set Andrée’s password; give her the admin URL and password out of band.
+4. Set `OWNER_PASSWORD` (Andrée) and `DEV_PASSWORD` (Jean); give each person
+   only their own password and the admin URL out of band.
 5. Seed `content/site.json` from current placeholders so the first Save
    replaces known keys only.
 
-Andrée day-to-day: open admin → edit → Save → wait for Pages → verify live.
+Day-to-day (Andrée or Jean): open admin → login → edit → Save → wait for
+Pages → verify live.
 
 ---
 
@@ -219,5 +224,7 @@ spec.
 
 - Andrée can change a candle price and a Stripe link without opening HTML.
 - After Save + Pages deploy, public pages show the new values.
-- A stranger with only the admin URL cannot save without the password.
-- Developer is not required for routine catalogue/payment-link updates.
+- A stranger with only the admin URL cannot save without owner or dev password.
+- Andrée can do routine catalogue/payment-link updates alone.
+- Jean can log in with the **dev** password to correct or update the same fields
+  without using Andrée’s password.
