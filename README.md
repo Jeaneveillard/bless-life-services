@@ -57,8 +57,8 @@ Full list:
 | `[NOTARY PRICE]` | e.g. `$25` | Notary card + notary.html |
 | `[CPR PRICE]` | e.g. `$85` | CPR card + cpr.html |
 | `[OFFICIANT DEPOSIT]` / `[DECOR DEPOSIT]` | Deposit amount, e.g. `$150` | Services cards |
-| `[STRIPE — …]` ×7 names, 9 spots | Stripe Payment Link URL | Services, candles, cpr.html, notary.html |
-| `[PAYPAL — …]` ×7 names, 9 spots | PayPal button link URL | Services, candles, cpr.html, notary.html |
+| `[STRIPE — …]` | Stripe Payment Link URL. 7 different ones; two of them appear on two pages each, so you paste 9 times | Services, candles, cpr.html, notary.html |
+| `[PAYPAL — …]` | PayPal button link URL. Same 7, same 9 places | Services, candles, cpr.html, notary.html |
 | `[CANDLE n NAME/DESCRIPTION/PRICE/SIZE]` | One set per candle model (×3) | Store section |
 | `[CANDLE n IMAGE]` | Path to a real photo file — see "Candle photos" below | Store section |
 | `[CANDLE LEAD TIME]` | e.g. `5–7 days` | Store section |
