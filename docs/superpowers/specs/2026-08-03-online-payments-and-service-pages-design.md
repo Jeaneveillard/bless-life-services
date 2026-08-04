@@ -214,9 +214,30 @@ does not answer the notary half at all, because the notary space is not training
 Whatever it turns out to be — case tracking, document exchange, appointment
 history — it is a different kind of product and needs its own answer.
 
-Open question to put to Andrée: **what does a client actually do in the notary
-space?** Until that is answered, the notary login cannot be specified, and
-choosing a platform for CPR alone risks buying a tool that solves half a problem.
+Partly answered 2026-08-04: Andrée is a commissioned notary and performs notarial
+work — signings, wedding officiating. The notary space is therefore **service
+delivery, not teaching**. It is a client space, not a student space.
+
+**If it is meant to enable remote notarization, it cannot be built.**
+Massachusetts authorises remote online notarization under MGL c.222 §28 (St.
+2023 c.2), but only on a platform approved by the Commonwealth. The notary must
+also complete a training course approved by the Secretary of the Commonwealth
+and file a notification form before performing any remote session, and must be
+physically in Massachusetts during the act. Sources consulted were secondary;
+confirm with the Secretary of the Commonwealth before acting on this.
+
+**If it is the simpler thing** — book an appointment, send documents ahead so
+Andrée can check they are in order, collect them afterwards — that is buildable,
+but it is scheduling plus secure file exchange, not a course platform.
+
+**Data warning.** A notary client space holds government IDs, deeds and powers of
+attorney. That is among the most sensitive data a small site can hold, and
+building it in-house means owning the breach risk permanently. For a one-person
+business this argues strongly against a custom build.
+
+**Recommendation: two needs, two tools.** A course platform for CPR. For notary,
+start with appointment booking only — many mobile notaries never need more — and
+add document exchange only if real demand appears.
 
 Note on structure: two entirely separate login systems were requested. One
 account with two entitlements is normally better — a person enrolled in both
