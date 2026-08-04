@@ -189,6 +189,14 @@ h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;margin:0;le
   color:var(--gold-600);margin:0;
 }
 .candle .pay{margin-top:1.1rem}
+/* A candle tile's inner width never reliably clears the ~323px side-by-side
+   threshold noted above: it tops out around 301px in the 3-column grid, and
+   in the 2-column band it only crosses the threshold in a narrow slice near
+   857-900px. Left to the shared rule, the two buttons would stack almost
+   everywhere but flip to side-by-side in that sliver — an accident of width,
+   not a real design choice. Stack them on purpose at every width instead. */
+.candle .pay__row{flex-direction:column}
+.candle .pay__btn{flex:1 1 auto;width:100%}
 
 @media (max-width:900px){ .candles{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:600px){ .candles{grid-template-columns:1fr} }
