@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bless Life Services LLC — Notary Public, Wedding Officiant, Decor, Candles & CPR Training | Massachusetts</title>
 <meta name="description" content="Bless Life Services LLC of Massachusetts offers Notary Public services, wedding officiating, event decoration, handcrafted candles, and American Heart Association CPR/BLS training. Serving Greater Boston and surrounding communities.">
-<meta name="keywords" content="notary public Massachusetts, mobile notary MA, wedding officiant Massachusetts, event decoration Boston, handcrafted candles, CPR training, BLS certification, AHA instructor">
+<meta name="keywords" content="notary public Massachusetts, mobile notary MA, wedding officiant Massachusetts, event decoration Boston, handcrafted candles, CPR training, BLS training, AHA instructor">
 <meta name="author" content="Bless Life Services LLC">
 
 <meta property="og:type" content="website">
@@ -18,6 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..700&family=Karla:ital,wght@0,300..800;1,300..700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="styles.css">
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
 {
@@ -66,6 +67,8 @@
 
     <nav class="nav" id="nav" aria-label="Primary">
       <a href="#services">Services</a>
+      <a href="cpr.html">CPR &amp; BLS</a>
+      <a href="notary.html">Notary</a>
       <a href="#store">Store</a>
       <a href="#about">About</a>
       <a href="#faq">FAQ</a>
@@ -109,7 +112,7 @@
       <li><strong>MA</strong><span>Commissioned Notary</span></li>
       <li><strong>AHA</strong><span>BLS Instructor</span></li>
       <li><strong>5</strong><span>Service Lines</span></li>
-      <li><strong>5</strong><span>Online Storefronts</span></li>
+      <li><strong>MA</strong><span>Made &amp; Shipped</span></li>
     </ul>
   </div>
 
@@ -148,7 +151,7 @@
           <li>Loan &amp; real estate signings</li>
           <li>Mobile notary — we travel to you</li>
         </ul>
-        <a href="#contact" class="card__link">Book a notary <span aria-hidden="true">→</span></a>
+        <a href="notary.html" class="card__link">Notary services in detail <span aria-hidden="true">→</span></a>
       </article>
 
       <article class="card reveal" style="--d:.12s">
@@ -169,6 +172,14 @@
           <li>Marriage license guidance</li>
         </ul>
         <a href="#contact" class="card__link">Reserve your date <span aria-hidden="true">→</span></a>
+        <div class="pay">
+          <p class="pay__price"><span class="ph">[OFFICIANT DEPOSIT]</span><small>deposit to reserve your date</small></p>
+          <div class="pay__row">
+            <a class="btn btn--navy pay__btn" href="[STRIPE — OFFICIANT DEPOSIT]">Pay by card</a>
+            <a class="btn btn--gold pay__btn" href="[PAYPAL — OFFICIANT DEPOSIT]">Pay with PayPal</a>
+          </div>
+          <p class="pay__note">Enter your event date at checkout — the balance is invoiced once the ceremony is planned.</p>
+        </div>
       </article>
 
       <article class="card reveal" style="--d:.19s">
@@ -189,6 +200,14 @@
           <li>Setup and same-night breakdown</li>
         </ul>
         <a href="#contact" class="card__link">Plan your event <span aria-hidden="true">→</span></a>
+        <div class="pay">
+          <p class="pay__price"><span class="ph">[DECOR DEPOSIT]</span><small>deposit to reserve your date</small></p>
+          <div class="pay__row">
+            <a class="btn btn--navy pay__btn" href="[STRIPE — DECOR DEPOSIT]">Pay by card</a>
+            <a class="btn btn--gold pay__btn" href="[PAYPAL — DECOR DEPOSIT]">Pay with PayPal</a>
+          </div>
+          <p class="pay__note">Enter your event date at checkout — the balance is invoiced once the design is agreed.</p>
+        </div>
       </article>
 
       <article class="card reveal" style="--d:.26s">
@@ -210,6 +229,14 @@
           <li>Wholesale &amp; bulk orders</li>
         </ul>
         <a href="#store" class="card__link">Shop candles <span aria-hidden="true">→</span></a>
+        <div class="pay">
+          <p class="pay__price">Made to order<small>poured after you order</small></p>
+          <div class="pay__row">
+            <a class="btn btn--navy pay__btn" href="#store">See the candles</a>
+            <a class="btn btn--gold pay__btn" href="#contact">Custom order</a>
+          </div>
+          <p class="pay__note">Wedding favors and bulk orders are quoted — tell us quantity and scent.</p>
+        </div>
       </article>
 
       <article class="card card--feature reveal" style="--d:.33s">
@@ -222,14 +249,20 @@
         <h3>CPR <span class="amp">&amp;</span> BLS Training</h3>
         <p>American Heart Association Basic Life Support courses taught by a certified
            AHA BLS Instructor. On-site group training for workplaces, schools, churches
-           and healthcare teams — official AHA eCard issued on completion.</p>
+           and healthcare teams — official AHA eCard issued after the in-person skills session.</p>
         <ul class="card__list">
-          <li>AHA BLS Provider certification</li>
+          <li>AHA BLS Provider course</li>
           <li>Healthcare providers &amp; students</li>
           <li>Workplace &amp; community groups</li>
           <li>On-site training at your location</li>
         </ul>
-        <a href="#contact" class="card__link">Schedule a class <span aria-hidden="true">→</span></a>
+        <a href="cpr.html" class="card__link">CPR training in detail <span aria-hidden="true">→</span></a>
+        <div class="pay">
+          <p class="pay__note">
+            AHA course completion cards require an in-person skills session.
+            <a href="cpr.html">How certification works, and what it costs</a>
+          </p>
+        </div>
       </article>
 
     </div>
@@ -273,41 +306,64 @@
 <section class="section store" id="store">
   <div class="shell">
     <div class="section__head reveal">
-      <p class="eyebrow">Shop Our Products</p>
-      <h2 class="section__title">Find Us Online</h2>
+      <p class="eyebrow">Shop Our Candles</p>
+      <h2 class="section__title">Poured to Order</h2>
       <p class="section__lede">
-        Our candles, decor pieces and gift sets are available on five marketplaces.
-        Shop wherever you already have an account.
+        Small-batch candles hand-poured in Massachusetts. Nothing sits in a warehouse —
+        yours is made after you order, which is why the scent is still sharp when it reaches you.
       </p>
     </div>
 
-    <div class="shops">
-      <a href="[AMAZON STORE LINK]" class="shop reveal" style="--d:.05s" target="_blank" rel="noopener noreferrer">
-        <span class="shop__name">Amazon</span>
-        <span class="shop__desc">Candles, gift sets &amp; fast Prime shipping</span>
-        <span class="shop__go" aria-hidden="true">↗</span>
-      </a>
-      <a href="[WALMART STORE LINK]" class="shop reveal" style="--d:.11s" target="_blank" rel="noopener noreferrer">
-        <span class="shop__name">Walmart</span>
-        <span class="shop__desc">Everyday essentials &amp; home fragrance</span>
-        <span class="shop__go" aria-hidden="true">↗</span>
-      </a>
-      <a href="[ETSY SHOP LINK]" class="shop reveal" style="--d:.17s" target="_blank" rel="noopener noreferrer">
-        <span class="shop__name">Etsy</span>
-        <span class="shop__desc">Handmade, personalized &amp; wedding favors</span>
-        <span class="shop__go" aria-hidden="true">↗</span>
-      </a>
-      <a href="[TIKTOK SHOP LINK]" class="shop reveal" style="--d:.23s" target="_blank" rel="noopener noreferrer">
-        <span class="shop__name">TikTok Shop</span>
-        <span class="shop__desc">Live drops, bundles &amp; new arrivals</span>
-        <span class="shop__go" aria-hidden="true">↗</span>
-      </a>
-      <a href="[SHOPIFY STORE LINK]" class="shop shop--wide reveal" style="--d:.29s" target="_blank" rel="noopener noreferrer">
-        <span class="shop__name">Our Shopify Store</span>
-        <span class="shop__desc">The full collection — custom orders, bulk pricing and wholesale inquiries, direct from us</span>
-        <span class="shop__go" aria-hidden="true">↗</span>
-      </a>
+    <div class="candles">
+
+      <article class="candle reveal" style="--d:.05s">
+        <img class="candle__img" src="[CANDLE 1 IMAGE]" alt="[CANDLE 1 NAME] candle" width="600" height="450" loading="lazy">
+        <h3 class="candle__name"><span class="ph">[CANDLE 1 NAME]</span></h3>
+        <p class="candle__desc"><span class="ph">[CANDLE 1 DESCRIPTION]</span></p>
+        <p class="candle__lead">Ready in <span class="ph">[CANDLE LEAD TIME]</span></p>
+        <div class="pay">
+          <p class="pay__price"><span class="ph">[CANDLE 1 PRICE]</span><small><span class="ph">[CANDLE 1 SIZE]</span></small></p>
+          <div class="pay__row">
+            <a class="btn btn--navy pay__btn" href="[STRIPE — CANDLE 1]">Pay by card</a>
+            <a class="btn btn--gold pay__btn" href="[PAYPAL — CANDLE 1]">Pay with PayPal</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="candle reveal" style="--d:.12s">
+        <img class="candle__img" src="[CANDLE 2 IMAGE]" alt="[CANDLE 2 NAME] candle" width="600" height="450" loading="lazy">
+        <h3 class="candle__name"><span class="ph">[CANDLE 2 NAME]</span></h3>
+        <p class="candle__desc"><span class="ph">[CANDLE 2 DESCRIPTION]</span></p>
+        <p class="candle__lead">Ready in <span class="ph">[CANDLE LEAD TIME]</span></p>
+        <div class="pay">
+          <p class="pay__price"><span class="ph">[CANDLE 2 PRICE]</span><small><span class="ph">[CANDLE 2 SIZE]</span></small></p>
+          <div class="pay__row">
+            <a class="btn btn--navy pay__btn" href="[STRIPE — CANDLE 2]">Pay by card</a>
+            <a class="btn btn--gold pay__btn" href="[PAYPAL — CANDLE 2]">Pay with PayPal</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="candle reveal" style="--d:.19s">
+        <img class="candle__img" src="[CANDLE 3 IMAGE]" alt="[CANDLE 3 NAME] candle" width="600" height="450" loading="lazy">
+        <h3 class="candle__name"><span class="ph">[CANDLE 3 NAME]</span></h3>
+        <p class="candle__desc"><span class="ph">[CANDLE 3 DESCRIPTION]</span></p>
+        <p class="candle__lead">Ready in <span class="ph">[CANDLE LEAD TIME]</span></p>
+        <div class="pay">
+          <p class="pay__price"><span class="ph">[CANDLE 3 PRICE]</span><small><span class="ph">[CANDLE 3 SIZE]</span></small></p>
+          <div class="pay__row">
+            <a class="btn btn--navy pay__btn" href="[STRIPE — CANDLE 3]">Pay by card</a>
+            <a class="btn btn--gold pay__btn" href="[PAYPAL — CANDLE 3]">Pay with PayPal</a>
+          </div>
+        </div>
+      </article>
+
     </div>
+
+    <p class="section__lede reveal" style="--d:.26s">
+      Wedding favors, corporate gifting or a scent that is not listed?
+      <a href="#contact">Tell us what you want</a> — custom labels and bulk pricing are quoted directly.
+    </p>
   </div>
 </section>
 
@@ -330,7 +386,7 @@
       </p>
       <p>
         Today we serve individuals, families, churches, schools and businesses across
-        Massachusetts, and ship handcrafted candles nationwide through five online storefronts.
+        Massachusetts, and hand-pour candles to order, shipped nationwide straight from this site.
       </p>
       <a href="#contact" class="btn btn--navy">Work With Us</a>
     </div>
@@ -429,9 +485,9 @@
         <summary>What CPR certification do you offer?</summary>
         <div class="qa__body">
           <p>We teach American Heart Association <strong>Basic Life Support (BLS)</strong> courses as
-          a certified AHA BLS Instructor. Successful students receive an official AHA BLS Provider
-          eCard, valid for two years and accepted by hospitals, nursing programs, schools and
-          employers nationwide.</p>
+          a certified AHA BLS Instructor. Students who complete the in-person skills session receive
+          an official AHA BLS Provider eCard, valid for two years and accepted by hospitals, nursing
+          programs, schools and employers nationwide.</p>
         </div>
       </details>
 
@@ -573,9 +629,10 @@
 
     <nav class="footer__nav" aria-label="Footer">
       <a href="#services">Services</a>
+      <a href="cpr.html">CPR &amp; BLS</a>
+      <a href="notary.html">Notary</a>
       <a href="#store">Store</a>
       <a href="#about">About</a>
-      <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </nav>
 
@@ -583,8 +640,8 @@
       <p>&copy; <span id="year">2026</span> Bless Life Services LLC. All rights reserved. Massachusetts, USA.</p>
       <p class="footer__disclaimer">
         Bless Life Services LLC is not a law firm and does not provide legal advice. A notary
-        public may not draft, select or explain legal documents. CPR and BLS certification is
-        issued by the American Heart Association upon successful course completion.
+        public may not draft, select or explain legal documents. American Heart Association
+        course completion cards are issued only after an in-person skills session.
       </p>
     </div>
   </div>

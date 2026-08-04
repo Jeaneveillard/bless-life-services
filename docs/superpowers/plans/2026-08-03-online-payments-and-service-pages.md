@@ -71,17 +71,17 @@ pages=$(find . -maxdepth 1 -name '*.html' | sort)
 # 1. No-JS fallback: any page using .reveal must keep content visible without JS.
 for f in $pages; do
   if grep -q 'class="[^"]*reveal' "$f"; then
-    if grep -q '<noscript>' "$f"; then
+    if grep -q '<noscript><style>\.reveal{opacity:1!important;transform:none!important}</style></noscript>' "$f"; then
       pass "no-JS fallback present: $f"
     else
-      fail "no-JS fallback missing: $f uses .reveal but has no <noscript>"
+      fail "no-JS fallback missing: $f uses .reveal but has no <noscript> override for .reveal"
     fi
   fi
 done
 
 # 2. Exactly one <h1> per page.
 for f in $pages; do
-  n=$(grep -c '<h1' "$f")
+  n=$(grep -o '<h1' "$f" | wc -l | tr -d ' ')
   if [ "$n" -eq 1 ]; then pass "one <h1>: $f"; else fail "$f has $n <h1> (expected 1)"; fi
 done
 
@@ -93,9 +93,20 @@ done
 
 # 4. Internal page links resolve to a file that exists.
 for f in $pages; do
-  for target in $(grep -o 'href="[a-z0-9._-]*\.html[^"]*"' "$f" | sed 's/href="//; s/#.*//; s/"//'); do
-    if [ -f "$target" ]; then pass "link resolves: $f -> $target"
-    else fail "$f links to missing file: $target"; fi
+  for href in $(grep -o 'href="[^"]*"' "$f" | sed 's/^href="//; s/"$//'); do
+    case "$href" in
+      http://*|https://*|//*|mailto:*|tel:*) continue ;;
+    esac
+    if ! printf '%s\n' "$href" | grep -q '\.html'; then
+      continue
+    fi
+    if printf '%s\n' "$href" | grep -qE '^[A-Za-z0-9._/-]+\.html'; then
+      target=$(printf '%s\n' "$href" | sed 's/#.*//')
+      if [ -f "$target" ]; then pass "link resolves: $f -> $target"
+      else fail "$f links to missing file: $target"; fi
+    else
+      fail "$f has an unclassifiable local-looking link: $href"
+    fi
   done
 done
 
@@ -112,7 +123,7 @@ note "placeholders total: $total"
 # 6. Production gate: no bracketed href may ship live.
 if [ "$PRODUCTION" -eq 1 ]; then
   for f in $pages; do
-    bad=$(grep -o 'href="\[[^"]*\]"' "$f")
+    bad=$(grep -oE 'href="[^"]*\[[A-Z][A-Z0-9 _—–-]*\][^"]*"' "$f")
     if [ -z "$bad" ]; then pass "no placeholder links: $f"
     else fail "$f still has placeholder links: $(echo "$bad" | tr '\n' ' ')"; fi
   done
@@ -208,13 +219,18 @@ Append to `styles.css` after `.btn--full`:
   display:block;font-family:var(--body);font-size:.82rem;font-weight:600;
   letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-top:.3rem;
 }
-.pay__row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
-.pay__btn{padding:.9rem 1rem;font-size:.8rem;letter-spacing:.05em}
+.pay__row{display:flex;flex-wrap:wrap;gap:.7rem}
+/* The wrap threshold is load-bearing. white-space:nowrap makes each button's
+   automatic minimum size its max-content width (~156px for "Pay with PayPal"),
+   and that minimum — not the 160px basis — is what actually governs: the buttons
+   sit side by side above ~323px of available width and stack below it. Changing
+   the basis, the gap, the padding or the button copy moves the threshold, so
+   re-check it against .cards and .candles. Both are narrower than 323px, which is
+   why .candle stacks them deliberately further down rather than by accident.
+   margin-top:0 overrides .btn--navy's 1.75rem, which is meant for a standalone
+   CTA and would push the card button below the PayPal one in this row. */
+.pay__btn{padding:.9rem 1rem;font-size:.8rem;letter-spacing:.05em;flex:1 1 160px;white-space:nowrap;margin-top:0}
 .pay__note{font-size:.85rem;color:var(--slate);margin:.9rem 0 0;line-height:1.5}
-
-@media (max-width:560px){
-  .pay__row{grid-template-columns:1fr}
-}
 
 .section--dark .pay{border-top-color:var(--line-light)}
 .section--dark .pay__price{color:#fff}
@@ -495,6 +511,14 @@ The five marketplace links are unreplaced placeholders pointing nowhere. Replace
   color:var(--gold-600);margin:0;
 }
 .candle .pay{margin-top:1.1rem}
+/* A candle tile's inner width never reliably clears the ~323px side-by-side
+   threshold noted above: it tops out around 301px in the 3-column grid, and
+   in the 2-column band it only crosses the threshold in a narrow slice near
+   857-900px. Left to the shared rule, the two buttons would stack almost
+   everywhere but flip to side-by-side in that sliver — an accident of width,
+   not a real design choice. Stack them on purpose at every width instead. */
+.candle .pay__row{flex-direction:column}
+.candle .pay__btn{flex:1 1 auto;width:100%}
 
 @media (max-width:900px){ .candles{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:600px){ .candles{grid-template-columns:1fr} }

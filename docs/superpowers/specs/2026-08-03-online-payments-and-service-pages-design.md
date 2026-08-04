@@ -193,12 +193,94 @@ material and practice quizzes, and the payment buttons sell **the in-person
 skills session**, which only an AHA instructor can deliver. The site feeds her
 real product instead of competing with it.
 
-Notary training carries no equivalent restriction.
-
 **Paid, gated content cannot run on GitHub Pages.** Andrée's courses are to be
 restricted to paying clients, which requires user accounts and a server. A
 static site cannot withhold a page, hide an answer key from "View Source",
 record who passed, or issue a verifiable certificate.
+
+### Accounts required — gathered 2026-08-04
+
+Three roles, not two:
+
+| Role | Purpose | Status |
+|---|---|---|
+| Andrée — admin | Publishes courses, sees enrolments, marks exams | Clear |
+| CPR — student | Course material and exams, paid and gated | Clear |
+| Notary — ? | A separate login with a different role | **Undefined** |
+
+**Andrée teaches CPR only. She does not train notaries.** That single fact
+decides the architecture: a course platform answers the CPR half completely and
+does not answer the notary half at all, because the notary space is not training.
+Whatever it turns out to be — case tracking, document exchange, appointment
+history — it is a different kind of product and needs its own answer.
+
+Partly answered 2026-08-04: Andrée is a commissioned notary and performs notarial
+work — signings, wedding officiating. The notary space is therefore **service
+delivery, not teaching**. It is a client space, not a student space.
+
+**If it is meant to enable remote notarization, it cannot be built.**
+Massachusetts authorises remote online notarization under MGL c.222 §28 (St.
+2023 c.2), but only on a platform approved by the Commonwealth. The notary must
+also complete a training course approved by the Secretary of the Commonwealth
+and file a notification form before performing any remote session, and must be
+physically in Massachusetts during the act. Sources consulted were secondary;
+confirm with the Secretary of the Commonwealth before acting on this.
+
+**If it is the simpler thing** — book an appointment, send documents ahead so
+Andrée can check they are in order, collect them afterwards — that is buildable,
+but it is scheduling plus secure file exchange, not a course platform.
+
+**Data warning.** A notary client space holds government IDs, deeds and powers of
+attorney. That is among the most sensitive data a small site can hold, and
+building it in-house means owning the breach risk permanently. For a one-person
+business this argues strongly against a custom build.
+
+Decided 2026-08-04: **booking plus documents sent ahead.** Not remote
+notarization. That removes the regulatory blocker entirely.
+
+### Resolved shape — the site stays static
+
+The notary side needs **no login at all**. A login means an account, a password
+and permanent access to maintain; booking an appointment and sending documents
+ahead is a one-time transaction per visit. A scheduling tool with an intake form
+does it with no accounts, no passwords and no stored credentials.
+
+With that, no backend is needed anywhere. Three independent pieces:
+
+| Need | Tool | Login |
+|---|---|---|
+| CPR courses and exams | Course platform | Yes — students, plus Andrée as admin |
+| Notary booking and documents | Scheduling tool | **No** |
+| Services and candles | Stripe / PayPal | No |
+
+The site stays on GitHub Pages, free and unmaintained, and links out to all
+three. This is materially simpler than the backend that "two logins" first
+implied.
+
+Scheduling tools priced 2026-08-04: Calendly free then $10/seat/mo but weak on
+forms; **Acuity** — purpose-built for service businesses, intake forms with file
+upload and payment at booking, Powerhouse $49/mo with HIPAA compliance; Setmore
+from $5/mo; Jotform for a file-upload form plus a scheduling widget.
+Recommendation: Acuity, one tool to learn for both jobs; Setmore or Jotform if
+budget is tight.
+
+**Design constraint that must be set up from day one:** Andrée needs to *see*
+documents before an appointment — to check they are complete, unblank, and carry
+the right notarial certificate. She does not need to *keep* them. A notary keeps
+a journal of notarial acts, not copies of the documents. Archiving them creates
+permanent liability and exposure for no benefit: a breach would release IDs,
+deeds and powers of attorney. Configure send-ahead-then-delete at the start, not
+as an afterthought. Confirm with Andrée — this is her professional
+responsibility.
+
+Note on structure: two entirely separate login systems were requested. One
+account with two entitlements is normally better — a person enrolled in both
+keeps one password, and Andrée keeps one roster. Separate systems are justified
+only if the two audiences must never overlap. Not yet decided.
+
+On the admin login specifically: on a hosted platform it costs nothing — the
+owner account *is* the admin. On an own backend every role has to be built and
+secured. This requirement argues for the platform option.
 
 Options priced 2026-08-03, decision postponed:
 
