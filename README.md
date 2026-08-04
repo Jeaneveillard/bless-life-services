@@ -8,14 +8,26 @@ Open `index.html` in any browser to preview locally.
 
 ```
 Andree Lourdes/
-├── index.html          ← homepage — all main content, candles, services
+├── index.html          ← homepage — services overview, contact, FAQ
+├── officiant.html      ← wedding officiant detail + deposit payment
+├── decoration.html     ← event decoration detail + deposit payment
+├── store.html          ← candle store + payment
 ├── cpr.html            ← CPR/BLS training detail page + payment
 ├── notary.html         ← notary service detail page + payment
 ├── thank-you.html      ← page shown after a successful payment
+├── content/
+│   └── site.json       ← prices, payment links, candle info (loaded by content.js)
+├── content.js          ← fills public pages from site.json
+├── admin/
+│   ├── index.html      ← owner/dev content editor
+│   ├── admin.js
+│   └── admin.css
 ├── styles.css          ← all styling
 ├── script.js           ← menu, scroll reveal, FAQ, contact form
 ├── assets/
 │   └── logo.png        ← brand logo (installed)
+├── workers/
+│   └── admin-api/      ← Cloudflare Worker — see workers/admin-api/README.md
 ├── tools/
 │   └── check-site.sh   ← automated check — see "Before going live"
 └── README.md
@@ -86,9 +98,9 @@ Only the text inside `href="..."` changes. Leave everything else — the class
 names, the button label — exactly as it is.
 
 > If you decide not to sell one of the three candles at all, delete its whole
-> `<article class="candle">…</article>` block from `index.html` (there are
-> three, one per candle, in the store section) instead of leaving unfilled
-> placeholders live on the page.
+> `<article class="candle">…</article>` block from `store.html` (there are
+> three, one per candle) instead of leaving unfilled placeholders live on the
+> page.
 
 ### Candle photos
 
@@ -163,9 +175,9 @@ setup, but the visitor must click "Send" in their own mail app.
 
 Nothing charges money until each `[STRIPE — …]` and `[PAYPAL — …]` placeholder is
 replaced with a real link. Both providers are set up the same way: you create the
-item in their dashboard, they hand you a URL, you paste it into `index.html`,
-and — for the notary and CPR links, which also appear on their own detail
-pages — into `cpr.html` or `notary.html` too.
+item in their dashboard, they hand you a URL, and you paste it into the file
+listed in the table below — or use the **admin panel** (section 7) to update
+payment links without opening HTML.
 
 **Before you start, you need:**
 
@@ -210,9 +222,9 @@ places in total, one paste each:
 |---|---|
 | `[… — NOTARY]` | `notary.html` |
 | `[… — CPR SESSION]` | `cpr.html` |
-| `[… — OFFICIANT DEPOSIT]` | `index.html` |
-| `[… — DECOR DEPOSIT]` | `index.html` |
-| `[… — CANDLE 1]` / `[… — CANDLE 2]` / `[… — CANDLE 3]` | `index.html` |
+| `[… — OFFICIANT DEPOSIT]` | `officiant.html` |
+| `[… — DECOR DEPOSIT]` | `decoration.html` |
+| `[… — CANDLE 1]` / `[… — CANDLE 2]` / `[… — CANDLE 3]` | `store.html` |
 
 **Deposits.** For the officiant and decoration deposits, name the item so the client
 cannot misread it — for example *"Wedding officiant — deposit to reserve your date"*.
@@ -268,7 +280,24 @@ maintenance. Pushing to `main` redeploys it.
 
 ---
 
-## 7. Before going live — checklist
+## 7. Admin panel
+
+Andrée can update prices, Stripe/PayPal links, candle details, and photos
+without editing HTML.
+
+**URL:** https://jeaneveillard.github.io/bless-life-services/admin/
+
+**For Andrée (owner):** Log in with the **owner** password Jean gave you out
+of band (not stored in this repo). Edit the fields → **Save** → wait 1–2
+minutes for GitHub Pages to republish → check the live site.
+
+**For Jean (dev):** Log in with the **dev** password for testing and
+corrections. Same workflow. Worker deploy and secrets setup:
+`workers/admin-api/README.md`.
+
+---
+
+## 8. Before going live — checklist
 
 - [ ] All `[BRACKETED]` placeholders replaced or deleted
 - [ ] All payment links tested by clicking them
@@ -286,7 +315,7 @@ maintenance. Pushing to `main` redeploys it.
 
 ---
 
-## Notes on what is intentionally **not** on the site
+## 9. Notes on what is intentionally **not** on the site
 
 Your AHA **Instructor ID** and **eCard Code** are deliberately excluded. Those
 are verification identifiers meant for employers and the AHA's own
