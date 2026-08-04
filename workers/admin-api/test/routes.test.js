@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { signSession } from '../src/auth.js';
-import worker from '../src/index.js';
+import worker, { resetRateLimitsForTests } from '../src/index.js';
 
 const baseEnv = {
   OWNER_PASSWORD: 'owner-secret',
@@ -22,6 +22,10 @@ async function saveRequest(headers = {}) {
     body: JSON.stringify({}),
   });
 }
+
+test.beforeEach(() => {
+  resetRateLimitsForTests();
+});
 
 test('save missing Bearer returns 401', async () => {
   const res = await worker.fetch(await saveRequest(), baseEnv);
@@ -45,4 +49,22 @@ test('save with valid session but missing GITHUB_TOKEN returns 503', async () =>
   assert.equal(res.status, 503);
   const body = await res.json();
   assert.match(body.error, /GITHUB_TOKEN/i);
+});
+
+test('save rate-limits after 20 attempts from the same IP', async () => {
+  const token = await signSession('owner', baseEnv);
+  const ipHeaders = {
+    Authorization: `Bearer ${token}`,
+    'CF-Connecting-IP': '203.0.113.50',
+  };
+
+  for (let i = 0; i < 20; i++) {
+    const res = await worker.fetch(await saveRequest(ipHeaders), baseEnv);
+    assert.equal(res.status, 503, `attempt ${i + 1} should reach GitHub check`);
+  }
+
+  const limited = await worker.fetch(await saveRequest(ipHeaders), baseEnv);
+  assert.equal(limited.status, 429);
+  const body = await limited.json();
+  assert.match(body.error, /too many save/i);
 });

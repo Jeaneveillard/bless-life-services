@@ -17,15 +17,27 @@ const WEBP_MAGIC = new Uint8Array([
   0x57, 0x45, 0x42, 0x50, 0x00,
 ]);
 
-test('validateUpload accepts jpeg with matching extension and magic', () => {
+test('validateUpload accepts candle-1.jpg with matching magic', () => {
   const r = validateUpload({
-    name: 'photo.jpg',
+    name: 'candle-1.jpg',
     contentType: 'image/jpeg',
     contentBase64: b64(JPEG_MAGIC),
   });
   assert.equal(r.ok, true);
-  assert.equal(r.safeName, 'photo.jpg');
+  assert.equal(r.safeName, 'candle-1.jpg');
   assert.equal(r.bytes.byteLength, JPEG_MAGIC.byteLength);
+});
+
+test('validateUpload rejects non-candle basenames', () => {
+  for (const name of ['photo.jpg', 'candle-4.jpg', 'candle-1.gif', 'Candle-1.jpg', 'logo.png']) {
+    const r = validateUpload({
+      name,
+      contentType: 'image/jpeg',
+      contentBase64: b64(JPEG_MAGIC),
+    });
+    assert.equal(r.ok, false, `expected reject for ${name}`);
+    assert.match(r.error, /candle-1|candle-2|candle-3|Invalid file name/i);
+  }
 });
 
 test('validateUpload rejects . and .. names', () => {
@@ -39,18 +51,19 @@ test('validateUpload rejects . and .. names', () => {
   }
 });
 
-test('validateUpload strips path and keeps basename', () => {
+test('validateUpload strips path and keeps candle basename', () => {
   const r = validateUpload({
-    name: '../photo.jpg',
+    name: '../candle-2.jpg',
     contentType: 'image/jpeg',
     contentBase64: b64(JPEG_MAGIC),
   });
   assert.equal(r.ok, true);
-  assert.equal(r.safeName, 'photo.jpg');
+  assert.equal(r.safeName, 'candle-2.jpg');
 });
+
 test('validateUpload rejects wrong extension for contentType', () => {
   const r = validateUpload({
-    name: 'photo.png',
+    name: 'candle-1.png',
     contentType: 'image/jpeg',
     contentBase64: b64(JPEG_MAGIC),
   });
@@ -60,7 +73,7 @@ test('validateUpload rejects wrong extension for contentType', () => {
 
 test('validateUpload rejects missing image extension', () => {
   const r = validateUpload({
-    name: 'photo',
+    name: 'candle-1',
     contentType: 'image/jpeg',
     contentBase64: b64(JPEG_MAGIC),
   });
@@ -69,12 +82,12 @@ test('validateUpload rejects missing image extension', () => {
 
 test('validateUpload rejects bad MIME', () => {
   const r = validateUpload({
-    name: 'photo.gif',
+    name: 'candle-1.gif',
     contentType: 'image/gif',
     contentBase64: b64(JPEG_MAGIC),
   });
   assert.equal(r.ok, false);
-  assert.match(r.error, /contentType/i);
+  assert.match(r.error, /contentType|Invalid file name/i);
 });
 
 test('validateUpload rejects oversize payload', () => {
@@ -83,7 +96,7 @@ test('validateUpload rejects oversize payload', () => {
   tooBig[1] = 0xd8;
   tooBig[2] = 0xff;
   const r = validateUpload({
-    name: 'huge.jpg',
+    name: 'candle-3.jpg',
     contentType: 'image/jpeg',
     contentBase64: b64(tooBig),
   });
@@ -93,7 +106,7 @@ test('validateUpload rejects oversize payload', () => {
 
 test('validateUpload rejects magic bytes mismatch', () => {
   const r = validateUpload({
-    name: 'photo.jpg',
+    name: 'candle-1.jpg',
     contentType: 'image/jpeg',
     contentBase64: b64(PNG_MAGIC),
   });
@@ -101,10 +114,10 @@ test('validateUpload rejects magic bytes mismatch', () => {
   assert.match(r.error, /content|magic|bytes|image/i);
 });
 
-test('validateUpload accepts png and webp', () => {
+test('validateUpload accepts png jpeg webp candle names', () => {
   assert.equal(
     validateUpload({
-      name: 'a.png',
+      name: 'candle-1.png',
       contentType: 'image/png',
       contentBase64: b64(PNG_MAGIC),
     }).ok,
@@ -112,7 +125,7 @@ test('validateUpload accepts png and webp', () => {
   );
   assert.equal(
     validateUpload({
-      name: 'b.webp',
+      name: 'candle-2.webp',
       contentType: 'image/webp',
       contentBase64: b64(WEBP_MAGIC),
     }).ok,
@@ -120,7 +133,7 @@ test('validateUpload accepts png and webp', () => {
   );
   assert.equal(
     validateUpload({
-      name: 'c.jpeg',
+      name: 'candle-3.jpeg',
       contentType: 'image/jpeg',
       contentBase64: b64(JPEG_MAGIC),
     }).ok,

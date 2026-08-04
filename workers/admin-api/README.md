@@ -19,13 +19,24 @@ npx wrangler secret put GITHUB_BRANCH    # defaults to main if unset
 npx wrangler deploy
 ```
 
-After deploy, copy the Worker URL (e.g.
-`https://bless-life-admin-api.<account>.workers.dev`) and paste it into
-`admin/admin.js` as `API_BASE`. For local testing against `wrangler dev`:
+**Required after deploy:** copy the **real** Worker URL wrangler prints
+(something like `https://bless-life-admin-api.<your-account-id>.workers.dev`)
+and paste it into `admin/admin.js` as `API_BASE`. The checked-in value is a
+placeholder only — the admin panel cannot login/save/upload until this is
+done. Do not invent a production URL.
+
+For local testing against `wrangler dev`:
 
 ```js
 localStorage.setItem('API_BASE', 'http://127.0.0.1:8787');
 ```
+
+## Rate limits
+
+Login, save, and upload each allow **20 requests per IP per 15 minutes**.
+Counters are **in-memory and isolate-local** (each Cloudflare isolate has its
+own Map). That is enough for v1 abuse resistance; it is not a global quota
+across all regions or Worker instances.
 
 ## GitHub token
 
@@ -64,7 +75,11 @@ returns 503).
 |---|---|---|
 | `/api/login` | POST | `{ password }` → `{ token, role }` |
 | `/api/save` | POST | Bearer + site JSON → commit `content/site.json` |
-| `/api/upload` | POST | Bearer + image → commit under `assets/` |
+| `/api/upload` | POST | Bearer + image → commit `assets/candle-{1,2,3}.{jpg,jpeg,png,webp}` only |
 
 CORS allowlist: `https://jeaneveillard.github.io`, `http://localhost:5500`,
 `http://127.0.0.1:5500`.
+
+Uploads reject any basename other than `candle-1`, `candle-2`, or `candle-3`
+with an allowed image extension. The admin UI always sends that name for the
+selected candle slot (browser file names are ignored).

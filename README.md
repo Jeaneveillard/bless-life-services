@@ -50,78 +50,26 @@ automatically, usually within a minute.
 
 ---
 
-## 2. Replace the placeholders
+## 2. Content you still edit in HTML
 
-Placeholders live in **three files**: `index.html`, `cpr.html` and
-`notary.html`. Every placeholder that appears as **visible text** on the
-page — prices, candle descriptions, and so on — is marked with a
-**gold highlighted box** like `[YOUR HOURS]`, so you can spot those just by
-looking at the page. Placeholders that live inside a link or an image
-(`href="…"`, `src="…"` — the Stripe/PayPal links and the candle photos)
-don't show on the page at all and can't be boxed, so you'll only find those
-by opening the file itself and searching for the brackets, or by working
-through the table below. Open each file in Notepad or VS Code, use
-**Ctrl+H** (Find and Replace), and swap each one.
+**Prices, Stripe/PayPal links, candles (copy + photos), hours, YouTube, and
+notary commission expiration** are owned by the **admin panel** — use
+[§7 Admin panel](#7-admin-panel), not Find/Replace in HTML.
 
-Full list:
+What remains for HTML edits are mostly prose and one-off copy. Gold
+highlighted boxes like `[CLIENT NAME]` still mark visible placeholders.
+Open the file in Notepad or VS Code and use **Ctrl+H** (Find and Replace)
+for these only:
 
 | Placeholder in the file | Replace with | Where |
 |---|---|---|
-| `[EXPIRATION DATE]` | Your MA notary commission expiration date | Credentials section |
-| `[YOUTUBE LINK]` | Your YouTube channel URL, or delete the whole `<a>` | Contact section |
-| `[YOUR HOURS — …]` | e.g. `Mon–Sat 8:00 AM – 8:00 PM` | Contact section |
-| `[ADD YOUR PRICING HERE]` | Your rates, or delete the whole FAQ item | FAQ section |
+| `[ADD YOUR PRICING HERE]` | Extra FAQ pricing prose, or delete the whole FAQ item | FAQ section (`index.html`) |
 | `[CLIENT NAME]` ×3 | Real client names (with their permission) | Testimonials |
 | `[CITY]` ×2 / `[ORGANIZATION]` | Their town, or the company you trained | Testimonials |
-| `[NOTARY PRICE]` | e.g. `$25` | `notary.html` |
-| `[CPR PRICE]` | e.g. `$85` | `cpr.html` |
-| `[OFFICIANT DEPOSIT]` / `[DECOR DEPOSIT]` | Deposit amount, e.g. `$150` | Services cards |
-| `[STRIPE — …]` | Stripe Payment Link URL. 7 of them, one paste each — see section 5 for which file | Officiant, decor, candles, cpr.html, notary.html |
-| `[PAYPAL — …]` | PayPal button link URL. Same 7, same places | Officiant, decor, candles, cpr.html, notary.html |
-| `[CANDLE n NAME/DESCRIPTION/PRICE/SIZE]` | One set per candle model (×3) | Store section |
-| `[CANDLE n IMAGE]` | Path to a real photo file — see "Candle photos" below | Store section |
-| `[CANDLE LEAD TIME]` | e.g. `5–7 days` | Store section |
 
-**A pasted link must look like** a full web address inside the quotation marks
-that are already there — don't remove the quotes, don't leave a space. A
-payment button looks like this before and after:
-
-```html
-<a class="btn btn--navy pay__btn" href="[STRIPE — CANDLE 1]">Pay by card</a>
-```
-
-```html
-<a class="btn btn--navy pay__btn" href="https://buy.stripe.com/abc123xyz">Pay by card</a>
-```
-
-Only the text inside `href="..."` changes. Leave everything else — the class
-names, the button label — exactly as it is.
-
-> If you decide not to sell one of the three candles at all, delete its whole
-> `<article class="candle">…</article>` block from `store.html` (there are
-> three, one per candle) instead of leaving unfilled placeholders live on the
-> page.
-
-### Candle photos
-
-`[CANDLE n IMAGE]` is different from the other placeholders — it isn't text
-you type over, it's a **file**. It sits inside `src="[CANDLE 1 IMAGE]"` on the
-candle's `<img>` tag, and the browser needs a real picture at that path to
-show anything.
-
-1. Take or choose a photo of the candle. The tiles are roughly **4:3** shaped
-   (wider than tall), so a photo close to that shape will fill the frame
-   without odd cropping.
-2. Save it into the `assets/` folder, e.g. `assets/candle-vanilla.jpg`.
-3. Replace the placeholder with that path:
-   ```html
-   <img class="candle__img" src="assets/candle-vanilla.jpg" alt="Vanilla candle" width="600" height="450" loading="lazy">
-   ```
-4. The `alt="[CANDLE 1 NAME] candle"` text right next to the image already
-   updates itself once you replace `[CANDLE 1 NAME]` per the table above —
-   just check it still reads like a sensible description (e.g. `"Vanilla
-   candle"`), since that's what a screen reader speaks aloud for anyone who
-   can't see the photo.
+Everything else that used to be a bracketed price, deposit, payment URL,
+candle field, hours, YouTube, or expiration date is filled from
+`content/site.json` via the admin panel.
 
 ### Social accounts already wired up
 
@@ -173,17 +121,18 @@ setup, but the visitor must click "Send" in their own mail app.
 
 ## 5. Turning on payments
 
-Nothing charges money until each `[STRIPE — …]` and `[PAYPAL — …]` placeholder is
-replaced with a real link. Both providers are set up the same way: you create the
-item in their dashboard, they hand you a URL, and you paste it into the file
-listed in the table below — or use the **admin panel** (section 7) to update
-payment links without opening HTML.
+Nothing charges money until each Stripe and PayPal link is a real
+`https://…` URL in the **admin panel** ([§7](#7-admin-panel)). Create the
+item in the provider dashboard, copy the URL they give you, then paste it
+into the matching admin field and **Save**. Do not Find/Replace payment
+URLs in the HTML files.
 
 **Before you start, you need:**
 
 - A **Stripe** account with your identity and bank account verified.
 - A **PayPal Business** account. A Personal account cannot create payment buttons.
   Converting is free and done from PayPal's site — but only you can do it.
+- The admin Worker deployed and `API_BASE` set (see §7) so Save works.
 
 **Stripe — one link per item**
 
@@ -193,15 +142,14 @@ payment links without opening HTML.
    and add a shipping rate — candles are physically mailed, so Stripe needs
    an address and a delivery charge. Leave shipping **off** for the notary,
    CPR, and deposit links — nothing is shipped for those.
-4. For the two deposit links only (`[STRIPE — OFFICIANT DEPOSIT]` and
-   `[STRIPE — DECOR DEPOSIT]`), add a **required custom field** asking for
-   the event date. Nothing in checkout otherwise asks which date is being
-   held — without this field you receive a deposit for a date you were
-   never told.
+4. For the two deposit links only (officiant deposit and decor deposit), add
+   a **required custom field** asking for the event date. Nothing in
+   checkout otherwise asks which date is being held — without this field
+   you receive a deposit for a date you were never told.
 5. Under **After payment**, choose *Redirect to a page* and enter
    `https://jeaneveillard.github.io/bless-life-services/thank-you.html`
-6. Copy the link. Paste it over the matching `[STRIPE — …]`. Each one appears
-   in exactly one place — see the table in section 2 for which file.
+6. Copy the link. Paste it into the matching Stripe field in the **admin
+   panel** (§7) for that service or candle, then Save.
 
 **PayPal — one button per item**
 
@@ -212,19 +160,19 @@ payment links without opening HTML.
    checkout otherwise asks which date is being held — without this field
    you receive a deposit for a date you were never told.
 4. Set **Auto return** to the same `thank-you.html` address as above.
-5. Copy the button link and paste it over the matching `[PAYPAL — …]`. Each one
-   appears in exactly one place — see the table in section 2 for which file.
+5. Copy the button link. Paste it into the matching PayPal field in the
+   **admin panel** (§7), then Save.
 
-**Where each link goes.** Seven Stripe links and seven PayPal links, fourteen
-places in total, one paste each:
+**Which page each link powers.** Seven Stripe links and seven PayPal links
+(admin fields map to these public pages):
 
-| Link | File |
+| Link (admin field) | Public page |
 |---|---|
-| `[… — NOTARY]` | `notary.html` |
-| `[… — CPR SESSION]` | `cpr.html` |
-| `[… — OFFICIANT DEPOSIT]` | `officiant.html` |
-| `[… — DECOR DEPOSIT]` | `decoration.html` |
-| `[… — CANDLE 1]` / `[… — CANDLE 2]` / `[… — CANDLE 3]` | `store.html` |
+| Notary | `notary.html` |
+| CPR session | `cpr.html` |
+| Officiant deposit | `officiant.html` |
+| Decor deposit | `decoration.html` |
+| Candle 1 / 2 / 3 | `store.html` |
 
 **Deposits.** For the officiant and decoration deposits, name the item so the client
 cannot misread it — for example *"Wedding officiant — deposit to reserve your date"*.
@@ -282,10 +230,21 @@ maintenance. Pushing to `main` redeploys it.
 
 ## 7. Admin panel
 
-Andrée can update prices, Stripe/PayPal links, candle details, and photos
-without editing HTML.
+**Primary path** for prices, Stripe/PayPal links, candle copy and photos,
+business hours, YouTube URL, and notary commission expiration. Use this
+instead of editing HTML for those fields.
 
 **URL:** https://jeaneveillard.github.io/bless-life-services/admin/
+
+> **Blocked until Jean deploys the Worker.** The admin UI calls a Cloudflare
+> Worker. `admin/admin.js` still has a placeholder `API_BASE`
+> (`https://bless-life-admin-api.<account>.workers.dev`). That is **not** a
+> real URL — do not invent one. After `npx wrangler deploy`, Jean must paste
+> the **actual** Worker URL into `API_BASE` in `admin/admin.js` and push.
+> Until then, login/save/upload will fail. For local testing only:
+> `localStorage.setItem('API_BASE', 'http://127.0.0.1:8787')` then reload
+> (serve admin from `http://localhost:5500` for CORS). Full deploy steps:
+> `workers/admin-api/README.md`.
 
 **For Andrée (owner):** Log in with the **owner** password Jean gave you out
 of band (not stored in this repo). Edit the fields → **Save** → wait 1–2
@@ -295,15 +254,20 @@ minutes for GitHub Pages to republish → check the live site.
 corrections. Same workflow. Worker deploy and secrets setup:
 `workers/admin-api/README.md`.
 
+Candle photo uploads always save as `assets/candle-1|2|3` plus
+`.jpg` / `.jpeg` / `.png` / `.webp` (the original file name is ignored).
+
 ---
 
 ## 8. Before going live — checklist
 
-- [ ] All `[BRACKETED]` placeholders replaced or deleted
+- [ ] Admin Worker deployed; real URL pasted into `admin/admin.js` `API_BASE`
+- [ ] Prices, payment links, candles, hours, YouTube set via admin and live
+- [ ] Remaining HTML placeholders (testimonials / FAQ prose) replaced or deleted
 - [ ] All payment links tested by clicking them
 - [ ] Testimonials replaced with real ones, or section deleted
 - [ ] Phone and email verified: **857-373-9518** / **etienneandree@yahoo.com**
-- [ ] Notary commission expiration date is current
+- [ ] Notary commission expiration date is current (admin → misc)
 - [ ] AHA instructor certification "Valid through" date (`index.html`,
       Credentials section) is still current — this is hard-coded and will
       go stale silently if not checked

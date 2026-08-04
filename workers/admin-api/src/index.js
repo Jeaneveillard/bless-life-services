@@ -4,11 +4,11 @@ import { getFile, putBinary, putFile } from './github.js';
 import { validateSiteContent } from './schema.js';
 import { validateUpload } from './upload.js';
 
-const LOGIN_WINDOW_MS = 15 * 60 * 1000;
-const LOGIN_MAX_ATTEMPTS = 20;
+const RATE_WINDOW_MS = 15 * 60 * 1000;
+const RATE_MAX_ATTEMPTS = 20;
 
 /** @type {Map<string, { count: number, reset: number }>} */
-const loginAttempts = new Map();
+const rateBuckets = new Map();
 
 function corsHeaders(request) {
   return corsHeadersForOrigin(request.headers.get('Origin'));
@@ -32,18 +32,29 @@ function clientIp(request) {
   );
 }
 
-function isLoginRateLimited(ip) {
+/**
+ * In-memory, per-isolate rate limit (not shared across Cloudflare isolates).
+ * @param {'login' | 'save' | 'upload'} kind
+ * @param {string} ip
+ */
+function isRateLimited(kind, ip) {
+  const key = `${kind}:${ip}`;
   const now = Date.now();
-  const entry = loginAttempts.get(ip);
+  const entry = rateBuckets.get(key);
   if (!entry || now >= entry.reset) {
-    loginAttempts.set(ip, { count: 1, reset: now + LOGIN_WINDOW_MS });
+    rateBuckets.set(key, { count: 1, reset: now + RATE_WINDOW_MS });
     return false;
   }
   entry.count += 1;
-  if (entry.count > LOGIN_MAX_ATTEMPTS) {
+  if (entry.count > RATE_MAX_ATTEMPTS) {
     return true;
   }
   return false;
+}
+
+/** Test helper — clears in-memory rate-limit buckets. */
+export function resetRateLimitsForTests() {
+  rateBuckets.clear();
 }
 
 function requireGithubToken(env) {
@@ -64,7 +75,7 @@ async function requireAuth(request, env) {
 
 async function handleLogin(request, env) {
   const ip = clientIp(request);
-  if (isLoginRateLimited(ip)) {
+  if (isRateLimited('login', ip)) {
     return json(request, 429, { error: 'Too many login attempts. Try again later.' });
   }
 
@@ -88,6 +99,11 @@ async function handleSave(request, env) {
   const session = await requireAuth(request, env);
   if (!session) {
     return json(request, 401, { error: 'Unauthorized' });
+  }
+
+  const ip = clientIp(request);
+  if (isRateLimited('save', ip)) {
+    return json(request, 429, { error: 'Too many save attempts. Try again later.' });
   }
 
   const missing = requireGithubToken(env);
@@ -128,6 +144,11 @@ async function handleUpload(request, env) {
   const session = await requireAuth(request, env);
   if (!session) {
     return json(request, 401, { error: 'Unauthorized' });
+  }
+
+  const ip = clientIp(request);
+  if (isRateLimited('upload', ip)) {
+    return json(request, 429, { error: 'Too many upload attempts. Try again later.' });
   }
 
   const missing = requireGithubToken(env);

@@ -8,7 +8,8 @@ const EXT_BY_TYPE = {
   'image/webp': new Set(['.webp']),
 };
 
-const SAFE_NAME_PATTERN = /^[A-Za-z0-9._-]+$/;
+/** Only candle-1|2|3 plus an allowed image extension. */
+const CANDLE_UPLOAD_NAME = /^candle-[123]\.(jpg|jpeg|png|webp)$/;
 
 function decodeBase64Bytes(b64) {
   try {
@@ -32,7 +33,7 @@ export function safeAssetName(name) {
     return null;
   }
   const base = name.split(/[/\\]/).pop();
-  if (!base || base === '.' || base === '..' || !SAFE_NAME_PATTERN.test(base)) {
+  if (!base || !CANDLE_UPLOAD_NAME.test(base)) {
     return null;
   }
   return base;
@@ -88,7 +89,10 @@ function extensionOf(name) {
 export function validateUpload(body) {
   const safeName = safeAssetName(body?.name);
   if (!safeName) {
-    return { ok: false, error: 'Invalid file name' };
+    return {
+      ok: false,
+      error: 'Invalid file name (must be candle-1, candle-2, or candle-3 with .jpg/.jpeg/.png/.webp)',
+    };
   }
 
   const contentType = body?.contentType;

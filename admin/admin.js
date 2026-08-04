@@ -1,7 +1,10 @@
 /**
  * Admin UI for Bless Life Services content edits.
  *
- * API_BASE: replace the placeholder after first Worker deploy.
+ * API_BASE is a PLACEHOLDER until Jean deploys the Cloudflare Worker and pastes
+ * the real workers.dev URL here. Until then the admin panel cannot save or upload.
+ * Do not invent a production URL.
+ *
  * Local testing against wrangler:
  *   localStorage.setItem('API_BASE', 'http://127.0.0.1:8787');
  *   then reload this page (serve admin from http://localhost:5500 for CORS).
@@ -219,8 +222,16 @@ async function uploadCandleImage(index, file) {
     throw new Error('Image must be 2 MB or smaller.');
   }
 
+  // Always force candle-N basename; never send the browser's original file name.
+  var slot = index + 1;
+  if (slot < 1 || slot > 3) {
+    throw new Error('Candle photo slot must be 1, 2, or 3.');
+  }
   var ext = extensionForType(file.type, file.name);
-  var name = 'candle-' + (index + 1) + ext;
+  if (!ext || !/^\.(jpg|jpeg|png|webp)$/.test(ext)) {
+    throw new Error('Use a JPEG, PNG, or WebP image.');
+  }
+  var name = 'candle-' + slot + ext;
   var contentBase64 = await fileToBase64(file);
 
   var res = await fetch(API_BASE + '/api/upload', {
