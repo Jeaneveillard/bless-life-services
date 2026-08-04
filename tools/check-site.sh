@@ -55,25 +55,33 @@ for f in $pages; do
   done
 done
 
-# 5. Placeholder inventory.
-total=0
-for f in $pages README.md; do
-  [ -f "$f" ] || continue
+# 5. Placeholder inventory. Site pages and README.md are counted and
+# reported separately — README.md documents placeholder syntax in its own
+# text (e.g. this table's examples), so its count never reaches 0 and
+# should not be added to the site total or it reads like a stuck counter.
+site_total=0
+for f in $pages; do
   n=$(grep -o '\[[A-Z][A-Z0-9 _—–-]*\]' "$f" | wc -l | tr -d ' ')
-  total=$((total + n))
+  site_total=$((site_total + n))
   [ "$n" -gt 0 ] && note "placeholders in $f: $n"
 done
-note "placeholders total: $total"
+docs_total=0
+if [ -f README.md ]; then
+  docs_total=$(grep -o '\[[A-Z][A-Z0-9 _—–-]*\]' README.md | wc -l | tr -d ' ')
+  [ "$docs_total" -gt 0 ] && note "placeholders in README.md: $docs_total"
+fi
+note "site placeholders total: $site_total"
+note "docs placeholders total: $docs_total"
 
 # 6. Production gate: no bracketed href may ship live.
 if [ "$PRODUCTION" -eq 1 ]; then
   for f in $pages; do
-    bad=$(grep -oE 'href="[^"]*\[[A-Z][A-Z0-9 _—–-]*\][^"]*"' "$f")
+    bad=$(grep -oE '(href|src)="[^"]*\[[A-Z][A-Z0-9 _—–-]*\][^"]*"' "$f")
     if [ -z "$bad" ]; then pass "no placeholder links: $f"
     else fail "$f still has placeholder links: $(echo "$bad" | tr '\n' ' ')"; fi
   done
 fi
 
 echo
-if [ "$fails" -eq 0 ]; then echo "PASS — $total placeholder(s) remaining"; exit 0
+if [ "$fails" -eq 0 ]; then echo "PASS — $site_total site placeholder(s), $docs_total doc placeholder(s) remaining"; exit 0
 else echo "FAILED — $fails problem(s)"; exit 1; fi
