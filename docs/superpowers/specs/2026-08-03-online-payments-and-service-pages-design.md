@@ -235,9 +235,43 @@ attorney. That is among the most sensitive data a small site can hold, and
 building it in-house means owning the breach risk permanently. For a one-person
 business this argues strongly against a custom build.
 
-**Recommendation: two needs, two tools.** A course platform for CPR. For notary,
-start with appointment booking only — many mobile notaries never need more — and
-add document exchange only if real demand appears.
+Decided 2026-08-04: **booking plus documents sent ahead.** Not remote
+notarization. That removes the regulatory blocker entirely.
+
+### Resolved shape — the site stays static
+
+The notary side needs **no login at all**. A login means an account, a password
+and permanent access to maintain; booking an appointment and sending documents
+ahead is a one-time transaction per visit. A scheduling tool with an intake form
+does it with no accounts, no passwords and no stored credentials.
+
+With that, no backend is needed anywhere. Three independent pieces:
+
+| Need | Tool | Login |
+|---|---|---|
+| CPR courses and exams | Course platform | Yes — students, plus Andrée as admin |
+| Notary booking and documents | Scheduling tool | **No** |
+| Services and candles | Stripe / PayPal | No |
+
+The site stays on GitHub Pages, free and unmaintained, and links out to all
+three. This is materially simpler than the backend that "two logins" first
+implied.
+
+Scheduling tools priced 2026-08-04: Calendly free then $10/seat/mo but weak on
+forms; **Acuity** — purpose-built for service businesses, intake forms with file
+upload and payment at booking, Powerhouse $49/mo with HIPAA compliance; Setmore
+from $5/mo; Jotform for a file-upload form plus a scheduling widget.
+Recommendation: Acuity, one tool to learn for both jobs; Setmore or Jotform if
+budget is tight.
+
+**Design constraint that must be set up from day one:** Andrée needs to *see*
+documents before an appointment — to check they are complete, unblank, and carry
+the right notarial certificate. She does not need to *keep* them. A notary keeps
+a journal of notarial acts, not copies of the documents. Archiving them creates
+permanent liability and exposure for no benefit: a breach would release IDs,
+deeds and powers of attorney. Configure send-ahead-then-delete at the start, not
+as an afterthought. Confirm with Andrée — this is her professional
+responsibility.
 
 Note on structure: two entirely separate login systems were requested. One
 account with two entitlements is normally better — a person enrolled in both
