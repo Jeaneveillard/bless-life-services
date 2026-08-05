@@ -195,10 +195,23 @@ async function loadSiteContent() {
   return res.json();
 }
 
+function applyAdminBranding() {
+  var role = sessionStorage.adminRole || '';
+  var titleEl = document.getElementById('admin-title');
+  var docTitle = document.getElementById('admin-doc-title') || document.querySelector('title');
+  var heading = role === 'dev' ? 'Content DEV Admin' : 'Content Admin';
+  var pageTitle = role === 'dev'
+    ? 'DEV Admin — Bless Life Services'
+    : 'Admin — Bless Life Services';
+  if (titleEl) titleEl.textContent = heading;
+  if (docTitle) docTitle.textContent = pageTitle;
+}
+
 function showFormView() {
   loginView.hidden = true;
   resetView.hidden = true;
   formView.hidden = false;
+  applyAdminBranding();
 }
 
 function showLoginView() {
@@ -208,6 +221,10 @@ function showLoginView() {
   sessionStorage.removeItem('adminToken');
   sessionStorage.removeItem('adminRole');
   sessionStorage.removeItem('adminUsername');
+  var titleEl = document.getElementById('admin-title');
+  var docTitle = document.getElementById('admin-doc-title') || document.querySelector('title');
+  if (titleEl) titleEl.textContent = 'Content Admin';
+  if (docTitle) docTitle.textContent = 'Admin — Bless Life Services';
 }
 
 function showResetView() {
