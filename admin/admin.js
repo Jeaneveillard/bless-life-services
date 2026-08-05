@@ -8,13 +8,28 @@
  *   localStorage.setItem('API_BASE', 'http://127.0.0.1:8787');
  *   then reload this page (serve admin from http://localhost:5500 for CORS).
  */
-var API_BASE = 'https://bless-life-admin-api.jeaneveillard.workers.dev';
+var DEFAULT_API_BASE = 'https://bless-life-admin-api.jeaneveillard.workers.dev';
+var API_BASE = DEFAULT_API_BASE;
+
+function isUsableApiBase(url) {
+  return typeof url === 'string'
+    && /^https?:\/\//i.test(url)
+    && url.indexOf('<') === -1
+    && url.indexOf(' ') === -1;
+}
+
 if (typeof localStorage !== 'undefined' && localStorage.API_BASE) {
-  API_BASE = String(localStorage.API_BASE).replace(/\/$/, '');
+  var stored = String(localStorage.API_BASE).replace(/\/$/, '');
+  if (isUsableApiBase(stored)) {
+    API_BASE = stored;
+  } else {
+    // Drop stale placeholders like "...<account>.workers.dev"
+    try { localStorage.removeItem('API_BASE'); } catch (e) { /* ignore */ }
+  }
 }
 
 function apiConfigured() {
-  return /^https?:\/\//i.test(API_BASE) && API_BASE.indexOf('<') === -1;
+  return isUsableApiBase(API_BASE);
 }
 
 function apiNotReadyMessage() {
