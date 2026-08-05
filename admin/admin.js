@@ -1,17 +1,24 @@
 /**
  * Admin UI for Bless Life Services content edits.
  *
- * API_BASE is a PLACEHOLDER until Jean deploys the Cloudflare Worker and pastes
- * the real workers.dev URL here. Until then the admin panel cannot save or upload.
- * Do not invent a production URL.
+ * API_BASE must be the real Cloudflare Worker URL after Jean deploys.
+ * Leave empty until then — the UI will show a clear setup message.
  *
  * Local testing against wrangler:
  *   localStorage.setItem('API_BASE', 'http://127.0.0.1:8787');
  *   then reload this page (serve admin from http://localhost:5500 for CORS).
  */
-var API_BASE = 'https://bless-life-admin-api.<account>.workers.dev';
+var API_BASE = '';
 if (typeof localStorage !== 'undefined' && localStorage.API_BASE) {
-  API_BASE = localStorage.API_BASE.replace(/\/$/, '');
+  API_BASE = String(localStorage.API_BASE).replace(/\/$/, '');
+}
+
+function apiConfigured() {
+  return /^https?:\/\//i.test(API_BASE) && API_BASE.indexOf('<') === -1;
+}
+
+function apiNotReadyMessage() {
+  return 'Admin API is not connected yet. Jean must deploy the Cloudflare Worker, then set the Worker URL in admin/admin.js (or localStorage.API_BASE).';
 }
 
 var SUCCESS_MSG = 'Saved. The live site updates in about 1–2 minutes.';
@@ -273,6 +280,10 @@ async function uploadCandleImage(index, file) {
 loginForm.addEventListener('submit', async function (event) {
   event.preventDefault();
   setStatus('', null);
+  if (!apiConfigured()) {
+    setStatus(apiNotReadyMessage(), 'error');
+    return;
+  }
   var username = document.getElementById('username').value;
   var password = document.getElementById('password').value;
   var submitBtn = loginForm.querySelector('button[type="submit"]');
@@ -321,6 +332,12 @@ contentForm.addEventListener('submit', async function (event) {
 
   var saveBtn = contentForm.querySelector('button[type="submit"]');
   saveBtn.disabled = true;
+
+  if (!apiConfigured()) {
+    saveBtn.disabled = false;
+    setStatus(apiNotReadyMessage(), 'error');
+    return;
+  }
 
   try {
     var payload = buildPayload();
@@ -401,6 +418,10 @@ document.addEventListener('click', function (event) {
 resetForm.addEventListener('submit', async function (event) {
   event.preventDefault();
   setStatus('', null);
+  if (!apiConfigured()) {
+    setStatus(apiNotReadyMessage(), 'error');
+    return;
+  }
   var newPw = document.getElementById('reset-new').value;
   var confirmPw = document.getElementById('reset-confirm').value;
   if (newPw !== confirmPw) {
@@ -436,6 +457,10 @@ resetForm.addEventListener('submit', async function (event) {
 
 changePasswordBtn.addEventListener('click', async function () {
   setStatus('', null);
+  if (!apiConfigured()) {
+    setStatus(apiNotReadyMessage(), 'error');
+    return;
+  }
   var oldPw = document.getElementById('change-old').value;
   var newPw = document.getElementById('change-new').value;
   var confirmPw = document.getElementById('change-confirm').value;
@@ -479,6 +504,9 @@ changePasswordBtn.addEventListener('click', async function () {
 });
 
 (function init() {
+  if (!apiConfigured()) {
+    setStatus(apiNotReadyMessage(), 'info');
+  }
   if (sessionStorage.adminToken) {
     loadSiteContent()
       .then(function (site) {

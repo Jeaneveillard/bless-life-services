@@ -136,21 +136,27 @@ textarea {
 .pw-field {
   position: relative;
   display: block;
+  width: 100%;
 }
 
-.pw-field input {
+.pw-field input[type="password"],
+.pw-field input[type="text"] {
   width: 100%;
-  padding-right: 2.75rem;
+  padding-right: 2.9rem !important;
+  box-sizing: border-box;
 }
 
 .pw-toggle {
   appearance: none;
+  -webkit-appearance: none;
   position: absolute;
+  z-index: 2;
   top: 50%;
-  right: 0.35rem;
+  right: 0.3rem;
   transform: translateY(-50%);
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -159,18 +165,19 @@ textarea {
   padding: 0;
   background: transparent;
   color: var(--slate);
+  font-size: 1.15rem;
+  line-height: 1;
   cursor: pointer;
 }
 
 .pw-toggle:hover {
   color: var(--blue-800);
-  background: rgba(8, 22, 51, 0.06);
+  background: rgba(8, 22, 51, 0.08);
 }
 
 .pw-icon {
-  width: 1.2rem;
-  height: 1.2rem;
   display: block;
+  pointer-events: none;
 }
 
 .pw-icon--closed {

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="admin.css?v=3">
 </head>
 <body>
   <div class="shell">
@@ -30,7 +30,7 @@
           Password
           <span class="pw-field">
             <input type="password" id="password" name="password" autocomplete="current-password" required>
-            <button type="button" class="pw-toggle" data-toggle-password="password" aria-label="Show password" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+            <button type="button" class="pw-toggle" data-toggle-password="password" aria-label="Show password" aria-pressed="false" title="Show password"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
           </span>
         </label>
         <button type="submit" class="btn btn--primary">Login</button>
@@ -56,21 +56,21 @@
           Recovery key
           <span class="pw-field">
             <input type="password" id="reset-recovery" name="recovery" autocomplete="off" required>
-            <button type="button" class="pw-toggle" data-toggle-password="reset-recovery" aria-label="Show recovery key" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+            <button type="button" class="pw-toggle" data-toggle-password="reset-recovery" aria-label="Show recovery key" aria-pressed="false" title="Show recovery key"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
           </span>
         </label>
         <label>
           New password
           <span class="pw-field">
             <input type="password" id="reset-new" name="newPassword" autocomplete="new-password" minlength="8" required>
-            <button type="button" class="pw-toggle" data-toggle-password="reset-new" aria-label="Show password" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+            <button type="button" class="pw-toggle" data-toggle-password="reset-new" aria-label="Show password" aria-pressed="false" title="Show password"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
           </span>
         </label>
         <label>
           Confirm new password
           <span class="pw-field">
             <input type="password" id="reset-confirm" name="confirmPassword" autocomplete="new-password" minlength="8" required>
-            <button type="button" class="pw-toggle" data-toggle-password="reset-confirm" aria-label="Show password" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+            <button type="button" class="pw-toggle" data-toggle-password="reset-confirm" aria-label="Show password" aria-pressed="false" title="Show password"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
           </span>
         </label>
         <div class="actions">
@@ -174,21 +174,21 @@
             Current password
             <span class="pw-field">
               <input type="password" id="change-old" autocomplete="current-password">
-              <button type="button" class="pw-toggle" data-toggle-password="change-old" aria-label="Show password" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+              <button type="button" class="pw-toggle" data-toggle-password="change-old" aria-label="Show password" aria-pressed="false" title="Show password"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
             </span>
           </label>
           <label>
             New password
             <span class="pw-field">
               <input type="password" id="change-new" autocomplete="new-password" minlength="8">
-              <button type="button" class="pw-toggle" data-toggle-password="change-new" aria-label="Show password" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+              <button type="button" class="pw-toggle" data-toggle-password="change-new" aria-label="Show password" aria-pressed="false" title="Show password"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
             </span>
           </label>
           <label>
             Confirm new password
             <span class="pw-field">
               <input type="password" id="change-confirm" autocomplete="new-password" minlength="8">
-              <button type="button" class="pw-toggle" data-toggle-password="change-confirm" aria-label="Show password" aria-pressed="false"><svg class="pw-icon pw-icon--open" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 7.5C2.73 16.89 7 20 12 20s9.27-3.11 11-7.5C21.27 8.11 17 5 12 5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg><svg class="pw-icon pw-icon--closed" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2.1 3.51L3.5 2.1l18.4 18.4-1.41 1.41-3.15-3.15A11.7 11.7 0 0112 20c-5 0-9.27-3.11-11-7.5a12.7 12.7 0 014.2-5.05L2.1 3.51zM12 7c2.76 0 5 2.24 5 5 0 .66-.13 1.29-.36 1.86l-6.5-6.5C10.71 7.13 11.34 7 12 7zm-5 5c0-.66.13-1.29.36-1.86l6.5 6.5c-.57.23-1.2.36-1.86.36-2.76 0-5-2.24-5-5z"/></svg></button>
+              <button type="button" class="pw-toggle" data-toggle-password="change-confirm" aria-label="Show password" aria-pressed="false" title="Show password"><span class="pw-icon pw-icon--open" aria-hidden="true">👁</span><span class="pw-icon pw-icon--closed" aria-hidden="true">🙈</span></button>
             </span>
           </label>
           <div class="actions">
