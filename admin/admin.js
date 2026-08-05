@@ -390,9 +390,12 @@ document.addEventListener('click', function (event) {
   if (!input) return;
   var showing = input.type === 'text';
   input.type = showing ? 'password' : 'text';
-  btn.textContent = showing ? 'Show' : 'Hide';
   btn.setAttribute('aria-pressed', showing ? 'false' : 'true');
-  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  var label = showing ? 'Show password' : 'Hide password';
+  if (id === 'reset-recovery') {
+    label = showing ? 'Show recovery key' : 'Hide recovery key';
+  }
+  btn.setAttribute('aria-label', label);
 });
 
 resetForm.addEventListener('submit', async function (event) {
