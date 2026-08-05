@@ -16,11 +16,16 @@ if (typeof localStorage !== 'undefined' && localStorage.API_BASE) {
 
 var SUCCESS_MSG = 'Saved. The live site updates in about 1–2 minutes.';
 var loginView = document.getElementById('login-view');
+var resetView = document.getElementById('reset-view');
 var formView = document.getElementById('form-view');
 var statusEl = document.getElementById('status');
 var loginForm = document.getElementById('login-form');
+var resetForm = document.getElementById('reset-form');
 var contentForm = document.getElementById('content-form');
 var logoutBtn = document.getElementById('logout-btn');
+var showResetBtn = document.getElementById('show-reset-btn');
+var cancelResetBtn = document.getElementById('cancel-reset-btn');
+var changePasswordBtn = document.getElementById('change-password-btn');
 
 function setStatus(message, kind) {
   if (!message) {
@@ -170,14 +175,24 @@ async function loadSiteContent() {
 
 function showFormView() {
   loginView.hidden = true;
+  resetView.hidden = true;
   formView.hidden = false;
 }
 
 function showLoginView() {
   formView.hidden = true;
+  resetView.hidden = true;
   loginView.hidden = false;
   sessionStorage.removeItem('adminToken');
   sessionStorage.removeItem('adminRole');
+  sessionStorage.removeItem('adminUsername');
+}
+
+function showResetView() {
+  formView.hidden = true;
+  loginView.hidden = true;
+  resetView.hidden = false;
+  setStatus('', null);
 }
 
 function extensionForType(type, fileName) {
@@ -258,6 +273,7 @@ async function uploadCandleImage(index, file) {
 loginForm.addEventListener('submit', async function (event) {
   event.preventDefault();
   setStatus('', null);
+  var username = document.getElementById('username').value;
   var password = document.getElementById('password').value;
   var submitBtn = loginForm.querySelector('button[type="submit"]');
   submitBtn.disabled = true;
@@ -266,13 +282,13 @@ loginForm.addEventListener('submit', async function (event) {
     var res = await fetch(API_BASE + '/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: password }),
+      body: JSON.stringify({ username: username, password: password }),
     });
     var data = await parseJsonResponse(res);
     if (!res.ok) {
       throw new Error(
         (data && data.error)
-          || (res.status === 401 ? 'Wrong password.' : 'Could not sign in. Check your connection.')
+          || (res.status === 401 ? 'Wrong username or password.' : 'Could not sign in. Check your connection.')
       );
     }
     if (!data || !data.token) {
@@ -280,11 +296,13 @@ loginForm.addEventListener('submit', async function (event) {
     }
     sessionStorage.adminToken = data.token;
     sessionStorage.adminRole = data.role || '';
+    sessionStorage.adminUsername = data.username || '';
     document.getElementById('password').value = '';
     var site = await loadSiteContent();
     populateForm(site);
     showFormView();
-    setStatus('Signed in' + (data.role ? ' as ' + data.role : '') + '.', 'ok');
+    var who = data.username || data.role || '';
+    setStatus('Signed in' + (who ? ' as ' + who : '') + '.', 'ok');
   } catch (err) {
     setStatus(plainError(err, 'Could not sign in. Check your connection.'), 'error');
   } finally {
@@ -354,6 +372,107 @@ contentForm.addEventListener('change', async function (event) {
 logoutBtn.addEventListener('click', function () {
   showLoginView();
   setStatus('Signed out.', 'info');
+});
+
+showResetBtn.addEventListener('click', function () {
+  showResetView();
+});
+
+cancelResetBtn.addEventListener('click', function () {
+  showLoginView();
+});
+
+document.addEventListener('click', function (event) {
+  var btn = event.target.closest('[data-toggle-password]');
+  if (!btn) return;
+  var id = btn.getAttribute('data-toggle-password');
+  var input = document.getElementById(id);
+  if (!input) return;
+  var showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  btn.textContent = showing ? 'Show' : 'Hide';
+  btn.setAttribute('aria-pressed', showing ? 'false' : 'true');
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+});
+
+resetForm.addEventListener('submit', async function (event) {
+  event.preventDefault();
+  setStatus('', null);
+  var newPw = document.getElementById('reset-new').value;
+  var confirmPw = document.getElementById('reset-confirm').value;
+  if (newPw !== confirmPw) {
+    setStatus('New password and confirmation do not match.', 'error');
+    return;
+  }
+  var submitBtn = resetForm.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  try {
+    var res = await fetch(API_BASE + '/api/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: document.getElementById('reset-username').value,
+        email: document.getElementById('reset-email').value,
+        recoveryPassword: document.getElementById('reset-recovery').value,
+        newPassword: newPw,
+      }),
+    });
+    var data = await parseJsonResponse(res);
+    if (!res.ok) {
+      throw new Error((data && data.error) || 'Could not reset password.');
+    }
+    resetForm.reset();
+    showLoginView();
+    setStatus('Password updated. Sign in with your new password.', 'ok');
+  } catch (err) {
+    setStatus(plainError(err, 'Could not reset password.'), 'error');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+changePasswordBtn.addEventListener('click', async function () {
+  setStatus('', null);
+  var oldPw = document.getElementById('change-old').value;
+  var newPw = document.getElementById('change-new').value;
+  var confirmPw = document.getElementById('change-confirm').value;
+  if (!oldPw || !newPw) {
+    setStatus('Enter your current password and a new password.', 'error');
+    return;
+  }
+  if (newPw !== confirmPw) {
+    setStatus('New password and confirmation do not match.', 'error');
+    return;
+  }
+  if (!sessionStorage.adminToken) {
+    showLoginView();
+    setStatus('Please sign in again.', 'error');
+    return;
+  }
+  changePasswordBtn.disabled = true;
+  try {
+    var res = await fetch(API_BASE + '/api/change-password', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ oldPassword: oldPw, newPassword: newPw }),
+    });
+    var data = await parseJsonResponse(res);
+    if (!res.ok) {
+      if (res.status === 401) {
+        showLoginView();
+        throw new Error('Session expired. Please sign in again.');
+      }
+      throw new Error((data && data.error) || 'Could not update password.');
+    }
+    document.getElementById('change-old').value = '';
+    document.getElementById('change-new').value = '';
+    document.getElementById('change-confirm').value = '';
+    setStatus('Password updated.', 'ok');
+  } catch (err) {
+    setStatus(plainError(err, 'Could not update password.'), 'error');
+  } finally {
+    changePasswordBtn.disabled = false;
+  }
 });
 
 (function init() {

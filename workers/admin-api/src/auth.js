@@ -1,4 +1,8 @@
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
+const MIN_PASSWORD_LENGTH = 8;
+
+/** In-memory fallback when KV is not bound (local/tests). Not durable across isolates. */
+const memoryOverrides = new Map();
 
 function base64urlEncode(input) {
   const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input;
@@ -37,35 +41,162 @@ async function importHmacKey(secret) {
   );
 }
 
-export function resolveRole(password, env) {
+/** Fixed usernames (not secrets). Bootstrap passwords live in Worker secrets. */
+export const ACCOUNTS = {
+  andreelourdes: {
+    role: 'owner',
+    email: 'etienneandree@yahoo.com',
+    passwordEnv: 'OWNER_PASSWORD',
+  },
+  amboul: {
+    role: 'dev',
+    email: 'jeaneveillard@gmail.com',
+    passwordEnv: 'DEV_PASSWORD',
+  },
+};
+
+export function normalizeUsername(username) {
+  if (typeof username !== 'string') return '';
+  return username.trim().toLowerCase();
+}
+
+export function normalizeEmail(email) {
+  if (typeof email !== 'string') return '';
+  return email.trim().toLowerCase();
+}
+
+export function getAccount(username) {
+  const key = normalizeUsername(username);
+  return key ? ACCOUNTS[key] || null : null;
+}
+
+export async function hashPassword(password, env) {
+  if (typeof env?.SESSION_SECRET !== 'string' || env.SESSION_SECRET.length === 0) {
+    throw new Error('SESSION_SECRET is required to hash passwords');
+  }
+  const data = new TextEncoder().encode(`${env.SESSION_SECRET}|${password}`);
+  const digest = await globalThis.crypto.subtle.digest('SHA-256', data);
+  return base64urlEncode(new Uint8Array(digest));
+}
+
+function overrideKey(username) {
+  return `pw:${normalizeUsername(username)}`;
+}
+
+async function readOverrideHash(username, env) {
+  const key = overrideKey(username);
+  if (env?.PASSWORD_OVERRIDES?.get) {
+    return env.PASSWORD_OVERRIDES.get(key);
+  }
+  return memoryOverrides.get(key) || null;
+}
+
+async function writeOverrideHash(username, hash, env) {
+  const key = overrideKey(username);
+  if (env?.PASSWORD_OVERRIDES?.put) {
+    await env.PASSWORD_OVERRIDES.put(key, hash);
+    return;
+  }
+  memoryOverrides.set(key, hash);
+}
+
+/** Test helper */
+export function clearPasswordOverridesForTests() {
+  memoryOverrides.clear();
+}
+
+export function validateNewPassword(password) {
+  if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH) {
+    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+  }
+  return null;
+}
+
+/**
+ * @returns {Promise<{ role: 'owner' | 'dev', username: string, email: string } | null>}
+ */
+export async function resolveRole(username, password, env) {
   if (typeof password !== 'string' || password.length === 0) {
     return null;
   }
 
-  const ownerPassword = env.OWNER_PASSWORD;
-  if (
-    typeof ownerPassword === 'string'
-    && ownerPassword.length > 0
-    && password === ownerPassword
-  ) {
-    return 'owner';
+  const normalizedUser = normalizeUsername(username);
+  const account = getAccount(normalizedUser);
+  if (!account) {
+    return null;
   }
 
-  const devPassword = env.DEV_PASSWORD;
-  if (
-    typeof devPassword === 'string'
-    && devPassword.length > 0
-    && password === devPassword
-  ) {
-    return 'dev';
+  const overrideHash = await readOverrideHash(normalizedUser, env);
+  if (overrideHash) {
+    const candidate = await hashPassword(password, env);
+    if (candidate !== overrideHash) {
+      return null;
+    }
+  } else {
+    const expectedPassword = env[account.passwordEnv];
+    if (
+      typeof expectedPassword !== 'string'
+      || expectedPassword.length === 0
+      || password !== expectedPassword
+    ) {
+      return null;
+    }
   }
 
-  return null;
+  return {
+    role: account.role,
+    username: normalizedUser,
+    email: account.email,
+  };
 }
 
-export async function signSession(role, env) {
+export async function setPasswordForUser(username, newPassword, env) {
+  const normalized = normalizeUsername(username);
+  const account = getAccount(normalized);
+  if (!account) {
+    return { ok: false, error: 'Unknown username' };
+  }
+  const bad = validateNewPassword(newPassword);
+  if (bad) {
+    return { ok: false, error: bad };
+  }
+  const hash = await hashPassword(newPassword, env);
+  await writeOverrideHash(normalized, hash, env);
+  return { ok: true };
+}
+
+export async function changePassword(username, oldPassword, newPassword, env) {
+  const account = await resolveRole(username, oldPassword, env);
+  if (!account) {
+    return { ok: false, error: 'Current password is incorrect' };
+  }
+  return setPasswordForUser(account.username, newPassword, env);
+}
+
+export async function resetPassword(username, email, recoveryPassword, newPassword, env) {
+  const account = getAccount(username);
+  if (!account) {
+    return { ok: false, error: 'Invalid account details' };
+  }
+  if (normalizeEmail(email) !== normalizeEmail(account.email)) {
+    return { ok: false, error: 'Invalid account details' };
+  }
+  const recovery = env.RECOVERY_PASSWORD;
+  if (
+    typeof recovery !== 'string'
+    || recovery.length === 0
+    || typeof recoveryPassword !== 'string'
+    || recoveryPassword !== recovery
+  ) {
+    return { ok: false, error: 'Invalid account details' };
+  }
+  return setPasswordForUser(normalizeUsername(username), newPassword, env);
+}
+
+export async function signSession(role, env, username = '') {
   const exp = Date.now() + SESSION_TTL_MS;
-  const payload = `${role}|${exp}`;
+  const user = normalizeUsername(username);
+  const payload = `${role}|${user}|${exp}`;
   const key = await importHmacKey(env.SESSION_SECRET);
   const sig = await globalThis.crypto.subtle.sign(
     'HMAC',
@@ -98,17 +229,17 @@ export async function verifySession(token, env) {
     return null;
   }
 
-  const sep = payload.lastIndexOf('|');
-  if (sep === -1) {
+  const parts = payload.split('|');
+  if (parts.length !== 3) {
     return null;
   }
 
-  const role = payload.slice(0, sep);
+  const [role, username, expRaw] = parts;
   if (role !== 'owner' && role !== 'dev') {
     return null;
   }
 
-  const exp = Number(payload.slice(sep + 1));
+  const exp = Number(expRaw);
   if (!Number.isFinite(exp) || exp <= Date.now()) {
     return null;
   }
@@ -131,5 +262,5 @@ export async function verifySession(token, env) {
     return null;
   }
 
-  return { role };
+  return { role, username: username || '' };
 }

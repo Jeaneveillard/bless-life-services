@@ -1,4 +1,4 @@
-import { resolveRole, signSession, verifySession } from './auth.js';
+import { changePassword, resetPassword, resolveRole, signSession, verifySession } from './auth.js';
 import { corsHeadersForOrigin } from './cors.js';
 import { getFile, putBinary, putFile } from './github.js';
 import { validateSiteContent } from './schema.js';
@@ -86,13 +86,74 @@ async function handleLogin(request, env) {
     return json(request, 400, { error: 'Invalid JSON body' });
   }
 
-  const role = resolveRole(body?.password, env);
-  if (!role) {
-    return json(request, 401, { error: 'Invalid password' });
+  const account = await resolveRole(body?.username, body?.password, env);
+  if (!account) {
+    return json(request, 401, { error: 'Invalid username or password' });
   }
 
-  const token = await signSession(role, env);
-  return json(request, 200, { token, role });
+  const token = await signSession(account.role, env, account.username);
+  return json(request, 200, {
+    token,
+    role: account.role,
+    username: account.username,
+    email: account.email,
+  });
+}
+
+async function handleChangePassword(request, env) {
+  const session = await requireAuth(request, env);
+  if (!session?.username) {
+    return json(request, 401, { error: 'Unauthorized' });
+  }
+
+  const ip = clientIp(request);
+  if (isRateLimited('login', ip)) {
+    return json(request, 429, { error: 'Too many attempts. Try again later.' });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(request, 400, { error: 'Invalid JSON body' });
+  }
+
+  const result = await changePassword(
+    session.username,
+    body?.oldPassword,
+    body?.newPassword,
+    env,
+  );
+  if (!result.ok) {
+    return json(request, 400, { error: result.error });
+  }
+  return json(request, 200, { ok: true });
+}
+
+async function handleResetPassword(request, env) {
+  const ip = clientIp(request);
+  if (isRateLimited('login', ip)) {
+    return json(request, 429, { error: 'Too many attempts. Try again later.' });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(request, 400, { error: 'Invalid JSON body' });
+  }
+
+  const result = await resetPassword(
+    body?.username,
+    body?.email,
+    body?.recoveryPassword,
+    body?.newPassword,
+    env,
+  );
+  if (!result.ok) {
+    return json(request, 400, { error: result.error });
+  }
+  return json(request, 200, { ok: true });
 }
 
 async function handleSave(request, env) {
@@ -206,6 +267,12 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === '/api/login') {
       return handleLogin(request, env);
+    }
+    if (url.pathname === '/api/change-password') {
+      return handleChangePassword(request, env);
+    }
+    if (url.pathname === '/api/reset-password') {
+      return handleResetPassword(request, env);
     }
     if (url.pathname === '/api/save') {
       return handleSave(request, env);

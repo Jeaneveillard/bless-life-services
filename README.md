@@ -246,13 +246,17 @@ instead of editing HTML for those fields.
 > (serve admin from `http://localhost:5500` for CORS). Full deploy steps:
 > `workers/admin-api/README.md`.
 
-**For Andrée (owner):** Log in with the **owner** password Jean gave you out
-of band (not stored in this repo). Edit the fields → **Save** → wait 1–2
+**For Andrée (owner):** Username `andreelourdes` (email
+`etienneandree@yahoo.com`) and the **owner** password Jean gave you out of
+band (not stored in this repo). Use **Show** next to a password field to
+reveal it. If you forget it, open **Forgot password?** and use your email
+plus the recovery key Jean shared. You can also change your password while
+signed in (Change password section). Edit the fields → **Save** → wait 1–2
 minutes for GitHub Pages to republish → check the live site.
 
-**For Jean (dev):** Log in with the **dev** password for testing and
-corrections. Same workflow. Worker deploy and secrets setup:
-`workers/admin-api/README.md`.
+**For Jean (dev):** Username `amboul` (email `jeaneveillard@gmail.com`) and
+the **dev** password. Same workflow. Worker deploy and secrets setup
+(including `RECOVERY_PASSWORD`): `workers/admin-api/README.md`.
 
 Candle photo uploads always save as `assets/candle-1|2|3` plus
 `.jpg` / `.jpeg` / `.png` / `.webp` (the original file name is ignored).

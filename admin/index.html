@@ -23,10 +23,60 @@
       <h2>Sign in</h2>
       <form id="login-form" class="form">
         <label>
+          Username
+          <input type="text" id="username" name="username" autocomplete="username" required>
+        </label>
+        <label>
           Password
-          <input type="password" id="password" name="password" autocomplete="current-password" required>
+          <span class="pw-field">
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" data-toggle-password="password" aria-label="Show password" aria-pressed="false">Show</button>
+          </span>
         </label>
         <button type="submit" class="btn btn--primary">Login</button>
+      </form>
+      <p class="auth-switch">
+        <button type="button" class="linkish" id="show-reset-btn">Forgot password?</button>
+      </p>
+    </section>
+
+    <section id="reset-view" class="panel" hidden>
+      <h2>Reset password</h2>
+      <p class="hint">Use your username, the email on your account, and the recovery key Jean set in Cloudflare. Then choose a new password (8+ characters).</p>
+      <form id="reset-form" class="form">
+        <label>
+          Username
+          <input type="text" id="reset-username" name="username" autocomplete="username" required>
+        </label>
+        <label>
+          Account email
+          <input type="email" id="reset-email" name="email" autocomplete="email" required>
+        </label>
+        <label>
+          Recovery key
+          <span class="pw-field">
+            <input type="password" id="reset-recovery" name="recovery" autocomplete="off" required>
+            <button type="button" class="pw-toggle" data-toggle-password="reset-recovery" aria-label="Show recovery key" aria-pressed="false">Show</button>
+          </span>
+        </label>
+        <label>
+          New password
+          <span class="pw-field">
+            <input type="password" id="reset-new" name="newPassword" autocomplete="new-password" minlength="8" required>
+            <button type="button" class="pw-toggle" data-toggle-password="reset-new" aria-label="Show password" aria-pressed="false">Show</button>
+          </span>
+        </label>
+        <label>
+          Confirm new password
+          <span class="pw-field">
+            <input type="password" id="reset-confirm" name="confirmPassword" autocomplete="new-password" minlength="8" required>
+            <button type="button" class="pw-toggle" data-toggle-password="reset-confirm" aria-label="Show password" aria-pressed="false">Show</button>
+          </span>
+        </label>
+        <div class="actions">
+          <button type="submit" class="btn btn--primary">Set new password</button>
+          <button type="button" class="btn btn--ghost" id="cancel-reset-btn">Back to sign in</button>
+        </div>
       </form>
     </section>
 
@@ -115,6 +165,35 @@
           <label>Notary commission expiration <input type="text" data-path="misc.notaryExpiration"></label>
           <label>Business hours <input type="text" data-path="misc.hours"></label>
           <label>YouTube URL <input type="url" data-path="misc.youtube" placeholder="https://"></label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Change password</legend>
+          <p class="hint">Change your own password while signed in. Forgot it? Sign out and use Forgot password.</p>
+          <label>
+            Current password
+            <span class="pw-field">
+              <input type="password" id="change-old" autocomplete="current-password">
+              <button type="button" class="pw-toggle" data-toggle-password="change-old" aria-label="Show password" aria-pressed="false">Show</button>
+            </span>
+          </label>
+          <label>
+            New password
+            <span class="pw-field">
+              <input type="password" id="change-new" autocomplete="new-password" minlength="8">
+              <button type="button" class="pw-toggle" data-toggle-password="change-new" aria-label="Show password" aria-pressed="false">Show</button>
+            </span>
+          </label>
+          <label>
+            Confirm new password
+            <span class="pw-field">
+              <input type="password" id="change-confirm" autocomplete="new-password" minlength="8">
+              <button type="button" class="pw-toggle" data-toggle-password="change-confirm" aria-label="Show password" aria-pressed="false">Show</button>
+            </span>
+          </label>
+          <div class="actions">
+            <button type="button" class="btn btn--ghost" id="change-password-btn">Update password</button>
+          </div>
         </fieldset>
 
         <div class="actions">

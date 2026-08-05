@@ -9,13 +9,17 @@ via the GitHub Contents API.
 ```bash
 cd workers/admin-api
 npx wrangler login
-npx wrangler secret put OWNER_PASSWORD   # Andrée's login — give her only this one
-npx wrangler secret put DEV_PASSWORD     # Jean's login — for dev/testing
+npx wrangler secret put OWNER_PASSWORD   # Andrée — username andreelourdes
+npx wrangler secret put DEV_PASSWORD     # Jean — username amboul
+npx wrangler secret put RECOVERY_PASSWORD  # shared key for "Forgot password"
 npx wrangler secret put SESSION_SECRET   # random string for signed session tokens
 npx wrangler secret put GITHUB_TOKEN     # fine-grained PAT — see below
 npx wrangler secret put GITHUB_REPO      # Jeaneveillard/bless-life-services
 # optional:
 npx wrangler secret put GITHUB_BRANCH    # defaults to main if unset
+# optional but recommended for durable password changes across Worker isolates:
+# npx wrangler kv namespace create PASSWORD_OVERRIDES
+# then add the id under [[kv_namespaces]] in wrangler.toml (binding PASSWORD_OVERRIDES)
 npx wrangler deploy
 ```
 
@@ -47,8 +51,9 @@ on `Jeaneveillard/bless-life-services` only. Store it as `GITHUB_TOKEN`.
 
 | Secret | Purpose |
 |---|---|
-| `OWNER_PASSWORD` | Andrée's admin login |
-| `DEV_PASSWORD` | Jean's admin login |
+| `OWNER_PASSWORD` | Password for username `andreelourdes` (Andrée, `etienneandree@yahoo.com`) |
+| `DEV_PASSWORD` | Password for username `amboul` (Jean, `jeaneveillard@gmail.com`) |
+| `RECOVERY_PASSWORD` | Shared recovery key for Forgot password (give Andrée out of band) |
 | `SESSION_SECRET` | HMAC key for session tokens |
 | `GITHUB_TOKEN` | PAT for committing site.json and uploads |
 | `GITHUB_REPO` | `owner/repo` to update |
@@ -73,7 +78,9 @@ returns 503).
 
 | Route | Method | Description |
 |---|---|---|
-| `/api/login` | POST | `{ password }` → `{ token, role }` |
+| `/api/login` | POST | `{ username, password }` → `{ token, role, username, email }` |
+| `/api/change-password` | POST | Bearer + `{ oldPassword, newPassword }` |
+| `/api/reset-password` | POST | `{ username, email, recoveryPassword, newPassword }` |
 | `/api/save` | POST | Bearer + site JSON → commit `content/site.json` |
 | `/api/upload` | POST | Bearer + image → commit `assets/candle-{1,2,3}.{jpg,jpeg,png,webp}` only |
 
