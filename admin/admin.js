@@ -8,7 +8,7 @@
  *   localStorage.setItem('API_BASE', 'http://127.0.0.1:8787');
  *   then reload this page (serve admin from http://localhost:5500 for CORS).
  */
-var API_BASE = '';
+var API_BASE = 'https://bless-life-admin-api.jeaneveillard.workers.dev';
 if (typeof localStorage !== 'undefined' && localStorage.API_BASE) {
   API_BASE = String(localStorage.API_BASE).replace(/\/$/, '');
 }
