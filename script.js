@@ -125,9 +125,86 @@
     });
   }
 
-  /* ---------- Notary quote form -> mailto ---------- */
+  /* ---------- Notary quote form -> printable sheet + mailto ---------- */
   var notaryForm = document.getElementById('notaryQuoteForm');
   var notaryNote = document.getElementById('notaryFormNote');
+
+  var escapeHtml = function (value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  };
+
+  var openNotaryPrintSheet = function (data) {
+    var when = new Date();
+    var stamped = when.toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    var rows = [
+      ['Full name', data.name],
+      ['Email', data.email],
+      ['Phone', data.phone || '—'],
+      ['What needs notarizing', data.need],
+      ['Appointment location', data.location],
+      ['Meeting place', data.where],
+      ['Preferred date', data.date || 'flexible'],
+      ['Additional notes', data.message || '—']
+    ];
+    var rowsHtml = rows.map(function (row) {
+      return (
+        '<tr><th>' + escapeHtml(row[0]) + '</th><td>' +
+        escapeHtml(row[1]).replace(/\n/g, '<br>') +
+        '</td></tr>'
+      );
+    }).join('');
+
+    var html = [
+      '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">',
+      '<title>Notary quote request — Bless Life Services</title>',
+      '<style>',
+      '*{box-sizing:border-box}',
+      'body{font-family:Georgia,"Times New Roman",serif;color:#0a1020;margin:0;padding:1.5rem;background:#fff}',
+      '.sheet{max-width:720px;margin:0 auto;border:1px solid #c9c4b8;padding:1.75rem 1.6rem 2rem}',
+      '.brand{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#8a7350;margin:0 0 .35rem}',
+      'h1{font-size:1.55rem;margin:0 0 .35rem;color:#0d2350}',
+      '.meta{font-size:.9rem;color:#4a5568;margin:0 0 1.25rem}',
+      'table{width:100%;border-collapse:collapse;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.95rem}',
+      'th,td{border-top:1px solid #ddd6c8;padding:.7rem .2rem;vertical-align:top;text-align:left}',
+      'th{width:34%;color:#0d2350;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}',
+      'td{white-space:pre-wrap;word-break:break-word}',
+      '.actions{margin:1.25rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}',
+      'button{font:inherit;font-weight:700;padding:.65rem 1.1rem;border-radius:8px;border:1px solid #0d2350;background:#0d2350;color:#fff;cursor:pointer}',
+      'button.secondary{background:#fff;color:#0d2350}',
+      '.hint{margin:.9rem 0 0;font-size:.85rem;color:#4a5568;font-family:"Helvetica Neue",Arial,sans-serif}',
+      '@media print{body{padding:0}.actions,.hint{display:none!important}.sheet{border:none;padding:0}}',
+      '</style></head><body>',
+      '<div class="sheet">',
+      '<p class="brand">Bless Life Services LLC</p>',
+      '<h1>Notary quote request</h1>',
+      '<p class="meta">Submitted ' + escapeHtml(stamped) + ' · For Andrée / office use</p>',
+      '<table>' + rowsHtml + '</table>',
+      '<div class="actions">',
+      '<button type="button" onclick="window.print()">Print this sheet</button>',
+      '<button type="button" class="secondary" onclick="window.close()">Close</button>',
+      '</div>',
+      '<p class="hint">Print or save as PDF for your records. The client email app should also open so the request is sent to etienneandree@yahoo.com.</p>',
+      '</div>',
+      '<script>window.addEventListener("load",function(){setTimeout(function(){window.print()},250)});<\/script>',
+      '</body></html>'
+    ].join('');
+
+    var printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      return false;
+    }
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    return true;
+  };
 
   if (notaryForm) {
     notaryForm.addEventListener('submit', function (e) {
@@ -143,20 +220,33 @@
         return el && el.value ? el.value.trim() : '';
       };
 
-      var subject = 'Notary quote request — ' + get('name');
+      var data = {
+        name: get('name'),
+        email: get('email'),
+        phone: get('phone'),
+        need: get('need'),
+        location: get('location'),
+        where: get('where'),
+        date: get('date'),
+        message: get('message')
+      };
+
+      var printed = openNotaryPrintSheet(data);
+
+      var subject = 'Notary quote request — ' + data.name;
       var body = [
         'New notary quote request from the website.',
         '',
-        'Name:     ' + get('name'),
-        'Email:    ' + get('email'),
-        'Phone:    ' + (get('phone') || '—'),
-        'Need:     ' + get('need'),
-        'Location: ' + get('location'),
-        'Meeting:  ' + get('where'),
-        'Date:     ' + (get('date') || 'flexible'),
+        'Name:     ' + data.name,
+        'Email:    ' + data.email,
+        'Phone:    ' + (data.phone || '—'),
+        'Need:     ' + data.need,
+        'Location: ' + data.location,
+        'Meeting:  ' + data.where,
+        'Date:     ' + (data.date || 'flexible'),
         '',
         'Notes:',
-        get('message') || '—'
+        data.message || '—'
       ].join('\n');
 
       window.location.href =
@@ -165,8 +255,9 @@
         '&body=' + encodeURIComponent(body);
 
       if (notaryNote) {
-        notaryNote.textContent = 'Your email app is opening with the quote request ready to send. ' +
-                                 'If nothing happens, call 857-373-9518.';
+        notaryNote.textContent = printed
+          ? 'A printable sheet opened (Print or Save as PDF). Your email app is also opening to send Andrée the request.'
+          : 'Your email app is opening with the quote request. Allow pop-ups to also open the printable sheet. If nothing happens, call 857-373-9518.';
         notaryNote.classList.add('is-ok');
       }
     });
