@@ -91,19 +91,68 @@
         bring it to the appointment instead — nothing is lost by waiting.
       </p>
 
-      <h2>Book a notarization</h2>
-      <div class="pay">
-        <p class="pay__price"><span class="ph" data-content="notary.price">[NOTARY PRICE]</span><small>per notarial act</small></p>
-        <div class="pay__row">
-          <a class="btn btn--navy pay__btn" data-pay="notary.stripe" href="#">Pay by card</a>
-          <a class="btn btn--gold pay__btn" data-pay="notary.paypal" href="#">Pay with PayPal</a>
+      <h2>Request a notary quote</h2>
+      <p>
+        There is no fixed online price. Tell us what you need and where you are —
+        we quote based on the work and the travel distance, then confirm before
+        anything is booked.
+      </p>
+
+      <form class="form" id="notaryQuoteForm" novalidate>
+        <div class="field">
+          <label for="nq-name">Full name</label>
+          <input type="text" id="nq-name" name="name" required autocomplete="name" placeholder="Jane Doe">
         </div>
-        <p class="pay__note">
-          Massachusetts sets no maximum notary fee; the price above is what you pay,
-          disclosed before the act. Mobile appointments add a travel charge quoted in advance —
-          <a href="index.html#contact">ask for a quote</a>.
+
+        <div class="field-row">
+          <div class="field">
+            <label for="nq-email">Email</label>
+            <input type="email" id="nq-email" name="email" required autocomplete="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="nq-phone">Phone</label>
+            <input type="tel" id="nq-phone" name="phone" autocomplete="tel" placeholder="(857) 000-0000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="nq-need">What do you need notarized?</label>
+          <textarea id="nq-need" name="need" rows="3" required placeholder="Type of document, number of signers, acknowledgment / jurat / other."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="nq-location">Appointment location</label>
+          <input type="text" id="nq-location" name="location" required autocomplete="street-address" placeholder="City or full address in Massachusetts">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="nq-where">Where should we meet?</label>
+            <select id="nq-where" name="where" required>
+              <option value="" disabled selected>Choose…</option>
+              <option>At your location (mobile notary)</option>
+              <option>At our location</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="nq-date">Preferred date</label>
+            <input type="date" id="nq-date" name="date">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="nq-msg">Anything else we should know?</label>
+          <textarea id="nq-msg" name="message" rows="3" placeholder="Timing, witnesses, hospital / office details, urgency…"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn--gold btn--full">Send quote request</button>
+        <p class="form__note" id="notaryFormNote" role="status">
+          Opens your email app with the request pre-filled for
+          <a href="mailto:etienneandree@yahoo.com">etienneandree@yahoo.com</a>.
+          Prefer to talk? <a href="tel:+18573739518">Call 857-373-9518</a>.
         </p>
-      </div>
+      </form>
 
       <h2>Common questions</h2>
       <div class="faq__list">
@@ -122,8 +171,8 @@
           <summary>Do you travel for notary appointments?</summary>
           <div class="qa__body">
             <p>Yes. We provide mobile notary service throughout Massachusetts — homes, hospitals,
-            nursing facilities, offices and other locations. A travel fee applies based on distance;
-            we quote it upfront before you book.</p>
+            nursing facilities, offices and other locations. Pricing depends on the work and
+            the distance; use the quote form above and we confirm the total before you book.</p>
           </div>
         </details>
 

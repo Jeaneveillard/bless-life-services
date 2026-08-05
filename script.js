@@ -125,6 +125,53 @@
     });
   }
 
+  /* ---------- Notary quote form -> mailto ---------- */
+  var notaryForm = document.getElementById('notaryQuoteForm');
+  var notaryNote = document.getElementById('notaryFormNote');
+
+  if (notaryForm) {
+    notaryForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (!notaryForm.checkValidity()) {
+        notaryForm.reportValidity();
+        return;
+      }
+
+      var get = function (name) {
+        var el = notaryForm.elements[name];
+        return el && el.value ? el.value.trim() : '';
+      };
+
+      var subject = 'Notary quote request — ' + get('name');
+      var body = [
+        'New notary quote request from the website.',
+        '',
+        'Name:     ' + get('name'),
+        'Email:    ' + get('email'),
+        'Phone:    ' + (get('phone') || '—'),
+        'Need:     ' + get('need'),
+        'Location: ' + get('location'),
+        'Meeting:  ' + get('where'),
+        'Date:     ' + (get('date') || 'flexible'),
+        '',
+        'Notes:',
+        get('message') || '—'
+      ].join('\n');
+
+      window.location.href =
+        'mailto:' + BUSINESS_EMAIL +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+
+      if (notaryNote) {
+        notaryNote.textContent = 'Your email app is opening with the quote request ready to send. ' +
+                                 'If nothing happens, call 857-373-9518.';
+        notaryNote.classList.add('is-ok');
+      }
+    });
+  }
+
   /* ---------- Header shrink on scroll ----------
      The logo lockup is tall by design at the top of the page; it tightens
      once the visitor starts reading so it never eats the viewport.
