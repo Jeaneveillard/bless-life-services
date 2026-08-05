@@ -801,3 +801,38 @@ a.contact__v:hover{color:var(--gold-400)}
 .page-prose > h2{margin:2.5rem 0 .9rem;font-size:1.6rem;color:var(--blue-800)}
 .page-prose > p,
 .page-prose > ul{max-width:64ch}
+
+/* Quote / request forms on light service pages (not the dark contact band) */
+.page-prose .form{
+  max-width:36rem;
+  margin-top:1.25rem;
+  background:var(--paper);
+  border:1px solid var(--line);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+.page-prose .field label{color:var(--blue-900)}
+.page-prose .field input,
+.page-prose .field select,
+.page-prose .field textarea{
+  color:var(--ink);
+  background:#fff;
+  border:1.5px solid var(--line);
+}
+.page-prose .field input::placeholder,
+.page-prose .field textarea::placeholder{color:rgba(10,16,32,.4)}
+.page-prose .field input:focus,
+.page-prose .field select:focus,
+.page-prose .field textarea:focus{
+  background:#fff;
+  border-color:var(--gold-500);
+  box-shadow:0 0 0 3px rgba(223,163,39,.18);
+}
+.page-prose .field select{
+  background-color:#fff;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%230D2350' stroke-width='1.8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+}
+.page-prose .field select option{background:#fff;color:var(--ink)}
+.page-prose .field input[type="date"]::-webkit-calendar-picker-indicator{filter:none;opacity:.7}
+.page-prose .form__note{color:var(--slate);text-align:left}
+.page-prose .form__note a{color:var(--blue-700)}
+.page-prose .form__note.is-ok{color:var(--blue-800)}
