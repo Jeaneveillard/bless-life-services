@@ -36,15 +36,16 @@ export function validateNotaryQuote(input) {
   return { ok: true, data };
 }
 
-function sheetRows(data) {
+function sheetRows(data, stamped) {
   return [
+    ['Date filled (archive)', stamped],
     ['Full name', data.name],
     ['Email', data.email],
     ['Phone', data.phone || '—'],
     ['What needs notarizing', data.need],
     ['Appointment location', data.location],
     ['Meeting place', data.where],
-    ['Preferred date', data.date || 'flexible'],
+    ['Preferred appointment date', data.date || 'flexible'],
     ['Additional notes', data.message || '—'],
   ];
 }
@@ -57,7 +58,7 @@ function sheetRows(data) {
  */
 export function buildNotarySheetHtml(data, stamped, opts = {}) {
   const forEmail = Boolean(opts.forEmail);
-  const rowsHtml = sheetRows(data).map(([label, value]) => (
+  const rowsHtml = sheetRows(data, stamped).map(([label, value]) => (
     `<tr><th>${escapeHtml(label)}</th><td>${escapeHtml(value).replace(/\n/g, '<br>')}</td></tr>`
   )).join('');
 
@@ -84,6 +85,9 @@ export function buildNotarySheetHtml(data, stamped, opts = {}) {
     '.body{padding:1.35rem 1.5rem 1.5rem}',
     'h1{font-size:1.45rem;margin:0 0 .35rem;color:#0d2350}',
     '.meta{font-size:.9rem;color:#4a5568;margin:0 0 1.15rem;font-family:Helvetica,Arial,sans-serif}',
+    '.archive{margin:0 0 1.15rem;padding:.85rem 1rem;border:2px solid #0d2350;background:#f7f3ea;font-family:Helvetica,Arial,sans-serif}',
+    '.archive__label{display:block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#0d2350;font-weight:700;margin:0 0 .25rem}',
+    '.archive__value{display:block;font-size:1.15rem;color:#0a1020;font-weight:700}',
     'table{width:100%;border-collapse:collapse;font-family:Helvetica,Arial,sans-serif;font-size:.95rem}',
     'th,td{border-top:1px solid #ddd6c8;padding:.7rem .2rem;vertical-align:top;text-align:left}',
     'th{width:34%;color:#0d2350;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}',
@@ -107,7 +111,11 @@ export function buildNotarySheetHtml(data, stamped, opts = {}) {
     '</header>',
     '<div class="body">',
     '<h1>Notary quote request</h1>',
-    `<p class="meta">Submitted ${escapeHtml(stamped)} · Office copy for Andrée Lourdes only</p>`,
+    '<p class="meta">Office copy for Andrée Lourdes only · keep for archive</p>',
+    '<div class="archive">',
+    '<span class="archive__label">Date filled (archive)</span>',
+    `<span class="archive__value">${escapeHtml(stamped)}</span>`,
+    '</div>',
     `<table>${rowsHtml}</table>`,
     printBits,
     '</div>',
@@ -160,7 +168,7 @@ export async function sendNotaryQuoteEmail(data, env) {
   const textBody = [
     'New notary quote request from the website.',
     '',
-    ...sheetRows(data).map(([label, value]) => `${label}: ${value}`),
+    ...sheetRows(data, stamped).map(([label, value]) => `${label}: ${value}`),
     '',
     'A printable HTML copy is attached. Open the attachment and print or save as PDF.',
   ].join('\n');
@@ -204,5 +212,5 @@ export async function sendNotaryQuoteEmail(data, env) {
     };
   }
 
-  return { ok: true };
+  return { ok: true, filledAt: stamped };
 }

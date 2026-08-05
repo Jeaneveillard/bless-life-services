@@ -128,9 +128,22 @@
   /* ---------- Notary quote form -> email Andrée only (body + attachment) ---------- */
   var notaryForm = document.getElementById('notaryQuoteForm');
   var notaryNote = document.getElementById('notaryFormNote');
+  var notaryFilled = document.getElementById('nq-filled');
   var NOTARY_API = 'https://bless-life-admin-api.jeaneveillard.workers.dev';
 
+  var stampNotaryFilled = function () {
+    if (!notaryFilled) return '';
+    var stamped = new Date().toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+    notaryFilled.value = stamped;
+    return stamped;
+  };
+
   if (notaryForm) {
+    stampNotaryFilled();
+
     notaryForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -143,6 +156,8 @@
         var el = notaryForm.elements[name];
         return el && el.value ? el.value.trim() : '';
       };
+
+      var filledAt = stampNotaryFilled();
 
       var data = {
         name: get('name'),
@@ -181,10 +196,14 @@
               'Could not send the request. Please call 857-373-9518.'
             );
           }
+          var archiveDate = (result.body && result.body.filledAt) || filledAt;
           notaryForm.reset();
+          stampNotaryFilled();
           if (notaryNote) {
             notaryNote.textContent =
-              'Thank you. Your request was emailed to Andrée only, with the printable sheet in the message and as an attachment she can open and print.';
+              'Thank you. Your request was emailed to Andrée only. Archive date on her sheet: ' +
+              archiveDate +
+              '.';
             notaryNote.classList.add('is-ok');
           }
         })

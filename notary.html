@@ -136,9 +136,15 @@
             </select>
           </div>
           <div class="field">
-            <label for="nq-date">Preferred date</label>
+            <label for="nq-date">Preferred appointment date</label>
             <input type="date" id="nq-date" name="date">
           </div>
+        </div>
+
+        <div class="field">
+          <label for="nq-filled">Date filled (archive)</label>
+          <input type="text" id="nq-filled" name="filledDisplay" readonly tabindex="-1" aria-live="polite">
+          <span class="field__hint">Recorded automatically when you send — Andrée keeps this on the printable sheet.</span>
         </div>
 
         <div class="field">

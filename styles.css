@@ -828,11 +828,16 @@ a.contact__v:hover{color:var(--gold-400)}
   box-shadow:0 0 0 3px rgba(223,163,39,.18);
 }
 .page-prose .field select{
-  background-color:#fff;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%230D2350' stroke-width='1.8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+  -webkit-appearance:none;
+  appearance:none;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%230D2350' stroke-width='1.8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E") no-repeat right 1rem center / 12px;
 }
 .page-prose .field select option{background:#fff;color:var(--ink)}
 .page-prose .field input[type="date"]::-webkit-calendar-picker-indicator{filter:none;opacity:.7}
+.page-prose .field input[readonly]{background:#f7f3ea;color:var(--blue-900);cursor:default}
+.page-prose .field__hint{
+  font-size:.78rem;color:var(--slate);line-height:1.4;margin-top:-.15rem;
+}
 .page-prose .form__note{color:var(--slate);text-align:left}
 .page-prose .form__note a{color:var(--blue-700)}
 .page-prose .form__note.is-ok{color:var(--blue-800)}

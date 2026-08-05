@@ -41,5 +41,8 @@ test('buildNotarySheetHtml includes branding and fields', () => {
   assert.match(html, /Bless Life Services LLC/);
   assert.match(html, /Jane Doe/);
   assert.match(html, /Deed/);
+  assert.match(html, /Date filled \(archive\)/);
+  assert.match(html, /Aug 4, 2026, 9:00 PM/);
+  assert.match(html, /class="archive"/);
   assert.doesNotMatch(html, /window\.print/);
 });

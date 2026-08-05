@@ -278,7 +278,7 @@ async function handleNotaryQuote(request, env) {
     return json(request, sent.status || 502, { error: sent.error });
   }
 
-  return json(request, 200, { ok: true });
+  return json(request, 200, { ok: true, filledAt: sent.filledAt || null });
 }
 
 export default {
