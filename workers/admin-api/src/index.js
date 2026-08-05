@@ -1,6 +1,7 @@
 import { changePassword, resetPassword, resolveRole, signSession, verifySession } from './auth.js';
 import { corsHeadersForOrigin } from './cors.js';
 import { getFile, putBinary, putFile } from './github.js';
+import { sendNotaryQuoteEmail, validateNotaryQuote } from './notaryQuote.js';
 import { validateSiteContent } from './schema.js';
 import { validateUpload } from './upload.js';
 
@@ -34,7 +35,7 @@ function clientIp(request) {
 
 /**
  * In-memory, per-isolate rate limit (not shared across Cloudflare isolates).
- * @param {'login' | 'save' | 'upload'} kind
+ * @param {'login' | 'save' | 'upload' | 'notary-quote'} kind
  * @param {string} ip
  */
 function isRateLimited(kind, ip) {
@@ -254,6 +255,32 @@ async function handleUpload(request, env) {
   return json(request, 200, { path });
 }
 
+async function handleNotaryQuote(request, env) {
+  const ip = clientIp(request);
+  if (isRateLimited('notary-quote', ip)) {
+    return json(request, 429, { error: 'Too many quote requests. Try again later.' });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(request, 400, { error: 'Invalid JSON body' });
+  }
+
+  const validated = validateNotaryQuote(body);
+  if (!validated.ok) {
+    return json(request, 400, { error: validated.error });
+  }
+
+  const sent = await sendNotaryQuoteEmail(validated.data, env);
+  if (!sent.ok) {
+    return json(request, sent.status || 502, { error: sent.error });
+  }
+
+  return json(request, 200, { ok: true });
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
@@ -273,6 +300,9 @@ export default {
     }
     if (url.pathname === '/api/reset-password') {
       return handleResetPassword(request, env);
+    }
+    if (url.pathname === '/api/notary-quote') {
+      return handleNotaryQuote(request, env);
     }
     if (url.pathname === '/api/save') {
       return handleSave(request, env);

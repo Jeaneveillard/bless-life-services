@@ -15,13 +15,28 @@ npx wrangler secret put RECOVERY_PASSWORD  # shared key for "Forgot password"
 npx wrangler secret put SESSION_SECRET   # random string for signed session tokens
 npx wrangler secret put GITHUB_TOKEN     # fine-grained PAT — see below
 npx wrangler secret put GITHUB_REPO      # Jeaneveillard/bless-life-services
+npx wrangler secret put RESEND_API_KEY   # for notary quote emails to Andrée only
 # optional:
+npx wrangler secret put RESEND_FROM      # e.g. "Bless Life <hello@yourdomain.com>"
 npx wrangler secret put GITHUB_BRANCH    # defaults to main if unset
 # optional but recommended for durable password changes across Worker isolates:
 # npx wrangler kv namespace create PASSWORD_OVERRIDES
 # then add the id under [[kv_namespaces]] in wrangler.toml (binding PASSWORD_OVERRIDES)
 npx wrangler deploy
 ```
+
+### Notary quote emails (Andrée only)
+
+Public form on `notary.html` posts to `/api/notary-quote`. The Worker emails
+**only** `etienneandree@yahoo.com` with:
+
+1. The branded printable sheet in the **HTML email body**
+2. The same sheet as an **HTML attachment** (open → Print / Save as PDF)
+
+Create a free [Resend](https://resend.com) account, add `RESEND_API_KEY`, and set
+`RESEND_FROM` to a verified sender. Until a domain is verified, Resend may only
+deliver to the Resend account owner — verify a domain (or use their test sender
+rules) before relying on delivery to Andrée’s Yahoo address.
 
 **Required after deploy:** copy the **real** Worker URL wrangler prints
 (something like `https://bless-life-admin-api.<your-account-id>.workers.dev`)
@@ -37,7 +52,7 @@ localStorage.setItem('API_BASE', 'http://127.0.0.1:8787');
 
 ## Rate limits
 
-Login, save, and upload each allow **20 requests per IP per 15 minutes**.
+Login, save, upload, and notary-quote each allow **20 requests per IP per 15 minutes**.
 Counters are **in-memory and isolate-local** (each Cloudflare isolate has its
 own Map). That is enough for v1 abuse resistance; it is not a global quota
 across all regions or Worker instances.
@@ -58,6 +73,8 @@ on `Jeaneveillard/bless-life-services` only. Store it as `GITHUB_TOKEN`.
 | `GITHUB_TOKEN` | PAT for committing site.json and uploads |
 | `GITHUB_REPO` | `owner/repo` to update |
 | `GITHUB_BRANCH` | Optional; defaults to `main` |
+| `RESEND_API_KEY` | Sends notary quote emails (body + printable attachment) to Andrée only |
+| `RESEND_FROM` | Optional verified From address for Resend |
 
 Passwords live only in Cloudflare — never commit them to the repo.
 Local dev uses `workers/admin-api/.dev.vars` (gitignored).
@@ -81,6 +98,7 @@ returns 503).
 | `/api/login` | POST | `{ username, password }` → `{ token, role, username, email }` |
 | `/api/change-password` | POST | Bearer + `{ oldPassword, newPassword }` |
 | `/api/reset-password` | POST | `{ username, email, recoveryPassword, newPassword }` |
+| `/api/notary-quote` | POST | Public. Quote form → email Andrée only (HTML body + HTML attachment) |
 | `/api/save` | POST | Bearer + site JSON → commit `content/site.json` |
 | `/api/upload` | POST | Bearer + image → commit `assets/candle-{1,2,3}.{jpg,jpeg,png,webp}` only |
 

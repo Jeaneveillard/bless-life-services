@@ -125,110 +125,10 @@
     });
   }
 
-  /* ---------- Notary quote form -> printable sheet + mailto ---------- */
+  /* ---------- Notary quote form -> email Andrée only (body + attachment) ---------- */
   var notaryForm = document.getElementById('notaryQuoteForm');
   var notaryNote = document.getElementById('notaryFormNote');
-
-  var escapeHtml = function (value) {
-    return String(value == null ? '' : value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  };
-
-  var openNotaryPrintSheet = function (data) {
-    var when = new Date();
-    var stamped = when.toLocaleString('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    });
-    var rows = [
-      ['Full name', data.name],
-      ['Email', data.email],
-      ['Phone', data.phone || '—'],
-      ['What needs notarizing', data.need],
-      ['Appointment location', data.location],
-      ['Meeting place', data.where],
-      ['Preferred date', data.date || 'flexible'],
-      ['Additional notes', data.message || '—']
-    ];
-    var rowsHtml = rows.map(function (row) {
-      return (
-        '<tr><th>' + escapeHtml(row[0]) + '</th><td>' +
-        escapeHtml(row[1]).replace(/\n/g, '<br>') +
-        '</td></tr>'
-      );
-    }).join('');
-
-    var logoUrl = new URL('assets/logo.png', window.location.href).href;
-    var html = [
-      '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">',
-      '<title>Notary quote request — Bless Life Services LLC</title>',
-      '<style>',
-      '*{box-sizing:border-box}',
-      'body{font-family:Georgia,"Times New Roman",serif;color:#0a1020;margin:0;padding:1.25rem;background:#fff}',
-      '.sheet{max-width:720px;margin:0 auto;border:1px solid #c9c4b8;padding:0;overflow:hidden}',
-      '.header{display:flex;align-items:center;gap:1rem;padding:1.1rem 1.4rem;border-bottom:2px solid #0d2350;background:#fbf8f2}',
-      '.header img{height:52px;width:auto;display:block}',
-      '.header__text strong{display:block;font-size:1.15rem;color:#0d2350;line-height:1.2}',
-      '.header__text span{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#8a7350;margin-top:.2rem;font-family:"Helvetica Neue",Arial,sans-serif}',
-      '.body{padding:1.35rem 1.5rem 1.5rem}',
-      'h1{font-size:1.45rem;margin:0 0 .35rem;color:#0d2350}',
-      '.meta{font-size:.9rem;color:#4a5568;margin:0 0 1.15rem;font-family:"Helvetica Neue",Arial,sans-serif}',
-      'table{width:100%;border-collapse:collapse;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.95rem}',
-      'th,td{border-top:1px solid #ddd6c8;padding:.7rem .2rem;vertical-align:top;text-align:left}',
-      'th{width:34%;color:#0d2350;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}',
-      'td{white-space:pre-wrap;word-break:break-word}',
-      '.actions{margin:1.25rem 0 0;display:flex;gap:.6rem;flex-wrap:wrap}',
-      'button{font:inherit;font-weight:700;padding:.65rem 1.1rem;border-radius:8px;border:1px solid #0d2350;background:#0d2350;color:#fff;cursor:pointer;font-family:"Helvetica Neue",Arial,sans-serif}',
-      'button.secondary{background:#fff;color:#0d2350}',
-      '.hint{margin:.9rem 0 0;font-size:.85rem;color:#4a5568;font-family:"Helvetica Neue",Arial,sans-serif}',
-      '.footer{margin-top:1.4rem;padding:1rem 1.5rem 1.15rem;border-top:1px solid #c9c4b8;background:#f7f3ea;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.8rem;color:#4a5568;line-height:1.5}',
-      '.footer strong{color:#0d2350}',
-      '.footer a{color:#0d2350;text-decoration:none}',
-      '.footer__line{margin:0 0 .35rem}',
-      '.footer__disc{margin:.55rem 0 0;font-size:.72rem;color:#6b7280}',
-      '@media print{body{padding:0}.actions,.hint{display:none!important}.sheet{border:none}.header{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}}',
-      '</style></head><body>',
-      '<div class="sheet">',
-      '<header class="header">',
-      '<img src="' + escapeHtml(logoUrl) + '" alt="Bless Life Services LLC" width="80" height="65">',
-      '<div class="header__text">',
-      '<strong>Bless Life Services LLC</strong>',
-      '<span>Notary Public · Massachusetts</span>',
-      '</div>',
-      '</header>',
-      '<div class="body">',
-      '<h1>Notary quote request</h1>',
-      '<p class="meta">Submitted ' + escapeHtml(stamped) + ' · Office copy</p>',
-      '<table>' + rowsHtml + '</table>',
-      '<div class="actions">',
-      '<button type="button" onclick="window.print()">Print this sheet</button>',
-      '<button type="button" class="secondary" onclick="window.close()">Close</button>',
-      '</div>',
-      '<p class="hint">Print or save as PDF for your records. The client email app should also open so the request is sent to etienneandree@yahoo.com.</p>',
-      '</div>',
-      '<footer class="footer">',
-      '<p class="footer__line"><strong>Bless Life Services LLC</strong> · Massachusetts, USA</p>',
-      '<p class="footer__line">Phone: <a href="tel:+18573739518">857-373-9518</a> · Email: <a href="mailto:etienneandree@yahoo.com">etienneandree@yahoo.com</a></p>',
-      '<p class="footer__line">Web: jeaneveillard.github.io/bless-life-services</p>',
-      '<p class="footer__disc">Bless Life Services LLC is not a law firm and does not provide legal advice. A notary public may not draft, select or explain legal documents.</p>',
-      '</footer>',
-      '</div>',
-      '<script>window.addEventListener("load",function(){setTimeout(function(){window.print()},250)});<\/script>',
-      '</body></html>'
-    ].join('');
-
-    var printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      return false;
-    }
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-    return true;
-  };
+  var NOTARY_API = 'https://bless-life-admin-api.jeaneveillard.workers.dev';
 
   if (notaryForm) {
     notaryForm.addEventListener('submit', function (e) {
@@ -255,35 +155,50 @@
         message: get('message')
       };
 
-      var printed = openNotaryPrintSheet(data);
-
-      var subject = 'Notary quote request — ' + data.name;
-      var body = [
-        'New notary quote request from the website.',
-        '',
-        'Name:     ' + data.name,
-        'Email:    ' + data.email,
-        'Phone:    ' + (data.phone || '—'),
-        'Need:     ' + data.need,
-        'Location: ' + data.location,
-        'Meeting:  ' + data.where,
-        'Date:     ' + (data.date || 'flexible'),
-        '',
-        'Notes:',
-        data.message || '—'
-      ].join('\n');
-
-      window.location.href =
-        'mailto:' + BUSINESS_EMAIL +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(body);
-
+      var submitBtn = notaryForm.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
       if (notaryNote) {
-        notaryNote.textContent = printed
-          ? 'A printable sheet opened (Print or Save as PDF). Your email app is also opening to send Andrée the request.'
-          : 'Your email app is opening with the quote request. Allow pop-ups to also open the printable sheet. If nothing happens, call 857-373-9518.';
-        notaryNote.classList.add('is-ok');
+        notaryNote.textContent = 'Sending your request to Andrée…';
+        notaryNote.classList.remove('is-ok');
       }
+
+      fetch(NOTARY_API + '/api/notary-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(function (res) {
+          return res.json().then(function (body) {
+            return { res: res, body: body };
+          }).catch(function () {
+            return { res: res, body: null };
+          });
+        })
+        .then(function (result) {
+          if (!result.res.ok) {
+            throw new Error(
+              (result.body && result.body.error) ||
+              'Could not send the request. Please call 857-373-9518.'
+            );
+          }
+          notaryForm.reset();
+          if (notaryNote) {
+            notaryNote.textContent =
+              'Thank you. Your request was emailed to Andrée only, with the printable sheet in the message and as an attachment she can open and print.';
+            notaryNote.classList.add('is-ok');
+          }
+        })
+        .catch(function (err) {
+          if (notaryNote) {
+            notaryNote.textContent = err && err.message
+              ? err.message
+              : 'Could not send the request. Please call 857-373-9518.';
+            notaryNote.classList.remove('is-ok');
+          }
+        })
+        .finally(function () {
+          if (submitBtn) submitBtn.disabled = false;
+        });
     });
   }
 
